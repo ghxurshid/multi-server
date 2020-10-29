@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resources/CListView.qml</file>
+        <file>resources/main.qml</file>
+        <file>resources/image/list-delete.png</file>
+        <file>resources/image/plus-sign.png</file>
+        <file>resources/CButton.qml</file>
+        <file>resources/FeatureButton.qml</file>
+        <file>resources/image/start.png</file>
+        <file>resources/image/stop.png</file>
+        <file>resources/CustomGlow.qml</file>
+        <file>resources/GlowingLabel.qml</file>
+        <file>resources/MessageViewer.qml</file>
+    </qresource>
+</RCC>
