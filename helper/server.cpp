@@ -7,7 +7,12 @@
 
 AbstractServer::AbstractServer(QObject *parent) : QObject(parent)
 {
+    connect(this, SIGNAL(serverStarted(QString)), parent, SLOT(serverStarted(QString)));
+    connect(this, SIGNAL(serverStopped(QString)), parent, SLOT(serverStopped(QString)));
+    connect(this, SIGNAL(clientConnected(QString)), parent, SLOT(clientConnected(QString)));
+    connect(this, SIGNAL(clientDisconnected(QString)), parent, SLOT(clientDisconnected(QString)));
 
+    connect(this, SIGNAL(dataReceived(QString)), parent, SLOT(dataReceived(QString)));
 }
 
 const QJsonObject &AbstractServer::settings()
@@ -24,19 +29,24 @@ void AbstractServer::setSettings(const QJsonObject &settings)
 #pragma mark - tcp server
 
 TcpServer::TcpServer(QObject *parent) : AbstractServer (parent)
-{
+{    
     server = new QTcpServer();
     server->setMaxPendingConnections(1);
+    socket = nullptr;
 }
 
 TcpServer::~TcpServer()
 {
     stop();
-    if (server) server->deleteLater();
+    if (server) {
+        delete server;
+        server = nullptr;
+    }
 }
 
 void TcpServer::start()
 {
+    qDebug() << "Hello";
     if (server)
     {
         auto tcp = settings()["tcp"];
@@ -50,10 +60,10 @@ void TcpServer::start()
         auto port    = portReg.exactMatch(prt) ? quint16(prt.toLong()) : quint16(0);
 
         if (server->listen(address, port))
-        {            
+        {
             auto message = QString("TcpServer is started.");
             emit serverStarted(message);
-        }        
+        }
     }
 }
 
@@ -126,7 +136,10 @@ void TcpServer::readyRead()
 
 void TcpServer::slotDisconnected()
 {
-    if (socket) socket->deleteLater();
+    if (socket) {
+        socket->deleteLater();
+        socket = nullptr;
+    }
     emit clientDisconnected(QString("Client disconnected"));
 }
 

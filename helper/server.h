@@ -17,15 +17,25 @@ public:
         QString message = QString("");
     };
 
+    enum class Type {
+        TCP,
+        HTTP,
+        COMM,
+        Bluetooth,
+        unknown
+    };
+
     virtual void start() = 0;
     virtual void stop()  = 0;
 
     virtual Response sendData(QString data) = 0;
     virtual bool isValid() = 0;
-    virtual bool started() = 0;
+    virtual bool started() = 0; 
 
     const QJsonObject &settings();
     void setSettings(const QJsonObject & settings);
+
+
 
 signals:
     void serverStarted(QString serverInfo);
@@ -38,7 +48,8 @@ signals:
 public slots:
 
 private:
-    QJsonObject settings_;     
+    QJsonObject settings_;
+
 };
 
 class TcpServer : public AbstractServer

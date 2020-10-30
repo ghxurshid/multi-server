@@ -32,8 +32,7 @@ signals:
     void sendTextChanged();
     void connectionStateChanged();
 
-public slots:
-    //tcp server
+public slots:   
     void serverStarted(QString serverInfo);
     void serverStopped(QString serverInfo);
     void clientConnected(QString clientInfo);

@@ -93,8 +93,7 @@ ApplicationWindow {
                             }
 
                             FeatureButton {
-                                text: qsTr("TCP")
-                                checked: true
+                                text: qsTr("TCP")                                
                                 Layout.fillHeight: true
                                 index: 0
                             }

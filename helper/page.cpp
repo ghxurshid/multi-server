@@ -3,7 +3,7 @@
 
 Page::Page(QQuickItem *parent) : QQuickItem (parent)
 {
-
+    server = nullptr;
 }
 
 
@@ -18,13 +18,19 @@ void Page::setType(int type)
 {    
     type_ = type;
 
-    if (server && server->started()) {
-        server->stop();
-        server->deleteLater();
+    if (server)
+    {
+        if (server->started())
+        {
+            server->stop();
+        }
+
+        delete server;
+        server = nullptr;
     }
 
     switch (type) {
-        case 0: server = new TcpServer(); break;
+        case 0: server = new TcpServer(this); break;
         case 1: break;
         case 2: break;
         case 3: break;
@@ -35,7 +41,10 @@ void Page::setType(int type)
 
 bool Page::connectionState()
 {
-    return connectionState_;
+//    return connectionState_;
+    bool conn = false;
+    if (server) conn = server->started();
+    return conn;
 }
 
 void Page::setConnectionState(bool state)
@@ -62,7 +71,33 @@ bool Page::startServer()
     recvText_.clear();
     sendText_.clear();
 
+    if (server) server->start();
+}
 
+void Page::serverStarted(QString serverInfo)
+{
+    qDebug() << "serverStarted: " << serverInfo;
+    emit connectionStateChanged();
+}
+
+void Page::serverStopped(QString serverInfo)
+{
+    qDebug() << "serverStopped: " << serverInfo;
+}
+
+void Page::clientConnected(QString clientInfo)
+{
+    qDebug() << "clientConnected: " << clientInfo;
+}
+
+void Page::clientDisconnected(QString clientInfo)
+{
+    qDebug() << "clientDisconnected: " << clientInfo;
+}
+
+void Page::dataReceived(QString data)
+{
+    qDebug() << "dataReceived: " << data;
 }
 
 
