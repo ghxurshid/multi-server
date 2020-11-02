@@ -25,12 +25,15 @@ public:
     QString sendText();
 
     Q_INVOKABLE bool startServer();
+    Q_INVOKABLE void sendData(QString data);
 
 signals:
     void typeChanged();    
     void recvTextChanged();
     void sendTextChanged();
     void connectionStateChanged();
+
+
 
 public slots:   
     void serverStarted(QString serverInfo);

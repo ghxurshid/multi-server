@@ -20,8 +20,9 @@ Flickable {
         color: "white"
         text: flickable.text
         font.pointSize: 15
-        font.bold: true
+        //font.bold: true
         wrapMode: TextArea.WordWrap
+        textFormat: TextEdit.RichText
 
     }
     ScrollBar.vertical: ScrollBar { }

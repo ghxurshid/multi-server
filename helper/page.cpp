@@ -68,36 +68,62 @@ QString Page::sendText()
 
 bool Page::startServer()
 {
-    recvText_.clear();
-    sendText_.clear();
+    if (server && server->isValid()) {
+        if (server->started()) {
+            server->stop();
+        } else {
+            recvText_.clear();
+            sendText_.clear();
+            server->start();
+        }
+    }
+    return true;
+}
 
-    if (server) server->start();
+void Page::sendData(QString data)
+{qDebug() << Q_FUNC_INFO << data;
+    if (server && server->isValid()) {
+        auto resp = server->sendData(data);
+        sendText_ += resp.message + "<br>";
+        emit sendTextChanged();
+    }
 }
 
 void Page::serverStarted(QString serverInfo)
 {
     qDebug() << "serverStarted: " << serverInfo;
+    recvText_ += serverInfo + "<br>";
+    emit recvTextChanged();
     emit connectionStateChanged();
 }
 
 void Page::serverStopped(QString serverInfo)
 {
-    qDebug() << "serverStopped: " << serverInfo;
+    qDebug() << "serverStopped: " << serverInfo;    
+    recvText_ += serverInfo + "<br>";
+    emit recvTextChanged();
+    emit connectionStateChanged();
 }
 
 void Page::clientConnected(QString clientInfo)
 {
     qDebug() << "clientConnected: " << clientInfo;
+    recvText_ += clientInfo + "<br>";
+    emit recvTextChanged();
 }
 
 void Page::clientDisconnected(QString clientInfo)
 {
     qDebug() << "clientDisconnected: " << clientInfo;
+    recvText_ += clientInfo + "<br>";
+    emit recvTextChanged();
 }
 
 void Page::dataReceived(QString data)
 {
     qDebug() << "dataReceived: " << data;
+    recvText_ += data + "<br>";
+    emit recvTextChanged();
 }
 
 

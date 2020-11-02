@@ -280,6 +280,7 @@ ApplicationWindow {
                         radius: dp(radius_)
 
                         TextInput {
+                            id: sendStringData
                             anchors.fill: parent
                             anchors.rightMargin: dp(margin_)
                             anchors.leftMargin: dp(margin_)
@@ -303,15 +304,13 @@ ApplicationWindow {
                         radius: dp(radius_)
 
                         TextInput {
+                            id: sendEndData
                             anchors.fill: parent
                             anchors.rightMargin: dp(margin_)
                             anchors.leftMargin: dp(margin_)
                             verticalAlignment: TextInput.AlignVCenter
                             font.pointSize: 15
-                            clip: true
-                            Component.onCompleted: {
-                                console.log(height)
-                            }
+                            clip: true                             
                         }
                     }
 
@@ -325,6 +324,10 @@ ApplicationWindow {
                             anchors.fill: parent
                             radius: dp(radius_)
                             text: qsTr("Send")
+                            onClicked: {
+                                console.log(sendStringData.text)
+                                mainWrapper.sendData(sendStringData.text)
+                            }
                         }
                     }
                 }
