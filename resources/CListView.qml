@@ -9,65 +9,106 @@ ListView {
     delegate: Component {
         id: listDelegate
 
-        Item {
-            id: delegateItem           
-            width: listView.width; height: dp(8)
-            clip: true            
+        MouseArea {
+            id: dragArea
 
+            property int idx: index
+            property bool held: false
             property bool isLast: index+1 < listView.count ? false : true
 
+            anchors { left: parent.left; right: parent.right }
+            height: dp(8)
+
+            drag.target: held ? delegateItem : undefined
+
+            pressAndHoldInterval: 200
+
+            onPressAndHold: held = !isLast ? true : false
+            onReleased: held = false
+
             Item {
-                anchors.fill: parent
-                visible: !isLast
-                anchors.rightMargin: dp(margin_)
-                anchors.leftMargin: dp(margin_ + 2)
+                id: delegateItem
+                width: dragArea.width; height: dragArea.height
+                anchors {horizontalCenter: parent.horizontalCenter; verticalCenter: parent.verticalCenter}
+                clip: true
 
-                RowLayout {
-                    anchors.fill: parent
-                    anchors.centerIn: parent
-                    spacing: dp(margin_)
+                Drag.active: dragArea.held
+                Drag.source: dragArea
+                Drag.hotSpot.x: width / 2
+                Drag.hotSpot.y: height / 2
 
-                    Text {
-                        id: costText
+                states: State {
+                    when: dragArea.held
 
-                        text: title
-                        font.pointSize: 15
-                        color: "white"
-                        font.bold: true
-                        Layout.alignment: Qt.AlignLeft
+                    ParentChange { target: delegateItem; parent: listView; scale: 1.1 }
+                    AnchorChanges {
+                        target: delegateItem
+                        anchors { horizontalCenter: undefined; verticalCenter: undefined }
                     }
+                }
+
+                Item {
+                    anchors.fill: parent
+                    visible: !isLast
+                    anchors.rightMargin: dp(margin_)
+                    anchors.leftMargin: dp(margin_ + 2)
+
+                    RowLayout {
+                        anchors.fill: parent
+                        anchors.centerIn: parent
+                        spacing: dp(margin_)
+
+                        Text {
+                            id: costText
+
+                            text: title
+                            font.pointSize: 15
+                            color: "white"
+                            font.bold: true
+                            Layout.alignment: Qt.AlignLeft
+                        }
+
+                        Image {
+                            Layout.alignment: Qt.AlignRight
+                            source: "qrc:/resources/image/list-delete.png"
+                            MouseArea { anchors.fill:parent; onClicked: listView.model.remove(index) }
+                        }
+                    }
+                }
+
+                Item {
+                    id: addButton
+                    visible: isLast
+                    anchors.fill: parent
 
                     Image {
-                        Layout.alignment: Qt.AlignRight
-                        source: "qrc:/resources/image/list-delete.png"
-                        MouseArea { anchors.fill:parent; onClicked: listView.model.remove(index) }
+                        anchors.centerIn: parent
+                        source: "qrc:/resources/image/plus-sign.png"
+                        MouseArea { anchors.fill:parent; onClicked: listView.model.insert(count - 1, {"title" : "Juice"}) }
                     }
                 }
             }
 
-            Item {
-                id: addButton
-                visible: isLast
-                anchors.fill: parent
+            DropArea {
+                anchors { fill: parent; margins: 10 }
 
-                Image {
-                    anchors.centerIn: parent
-                    source: "qrc:/resources/image/plus-sign.png"
-                    MouseArea { anchors.fill:parent; onClicked: listView.model.insert(count - 1, {"title" : "Juice"}) }
+                onEntered: {
+                    if (!dragArea.isLast)
+                    listView.model.move(drag.source.idx, dragArea.idx, 1)
                 }
             }
 
             ListView.onAdd: SequentialAnimation {
-                PropertyAction { target: delegateItem; property: "height"; value: 0 }
-                NumberAnimation { target: delegateItem; property: "height"; to: dp(8); duration: 250; easing.type: Easing.InOutQuad }
+                PropertyAction { target: dragArea; property: "height"; value: 0 }
+                NumberAnimation { target: dragArea; property: "height"; to: dp(8); duration: 250; easing.type: Easing.InOutQuad }
             }
 
             ListView.onRemove: SequentialAnimation {
-                PropertyAction { target: delegateItem; property: "ListView.delayRemove"; value: true }
-                NumberAnimation { target: delegateItem; property: "height"; to: 0; duration: 250; easing.type: Easing.InOutQuad }
+                PropertyAction { target: dragArea; property: "ListView.delayRemove"; value: true }
+                NumberAnimation { target: dragArea; property: "height"; to: 0; duration: 250; easing.type: Easing.InOutQuad }
 
                 // Make sure delayRemove is set back to false so that the item can be destroyed
-                PropertyAction { target: delegateItem; property: "ListView.delayRemove"; value: false }
+                PropertyAction { target: dragArea; property: "ListView.delayRemove"; value: false }
             }
         }
     }
