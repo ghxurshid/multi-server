@@ -170,9 +170,9 @@ ApplicationWindow {
                         ListModel {
                             id: strListModel
 
-                            ListElement { title: "Lorem" }
-                            ListElement { title: "Ipsum" }
-                            ListElement { title: "" }
+//                            ListElement { title: "Lorem" }
+//                            ListElement { title: "Ipsum" }
+//                            ListElement { title: "" }
                         }
 
                         CListView {

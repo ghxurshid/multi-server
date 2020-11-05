@@ -1,4 +1,4 @@
-QT += quick bluetooth network serialport
+QT += quick bluetooth network serialport httpserver
 CONFIG += c++11
 
 # The following define makes your compiler emit warnings if you use

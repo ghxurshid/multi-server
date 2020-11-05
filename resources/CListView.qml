@@ -25,6 +25,9 @@ ListView {
 
             onPressAndHold: held = !isLast ? true : false
             onReleased: held = false
+            onDoubleClicked: {
+                costTextInput.focus = true
+            }
 
             Item {
                 id: delegateItem
@@ -60,12 +63,31 @@ ListView {
 
                         Text {
                             id: costText
-
                             text: title
                             font.pointSize: 15
                             color: "white"
                             font.bold: true
                             Layout.alignment: Qt.AlignLeft
+                            Layout.fillWidth: true
+                            visible: !costTextInput.focus
+                        }
+
+                        TextField {
+                            id: costTextInput
+                            text: title
+                            font.pointSize: 15
+                            //color: "white"
+                            font.bold: true
+                            Layout.alignment: Qt.AlignLeft
+                            Layout.fillWidth: true
+                            focus: false
+                            visible: focus
+
+
+                            onAccepted: {
+                                listView.model.setProperty(idx, "title", costTextInput.text)
+                                costTextInput.focus = false
+                            }
                         }
 
                         Image {
@@ -84,7 +106,7 @@ ListView {
                     Image {
                         anchors.centerIn: parent
                         source: "qrc:/resources/image/plus-sign.png"
-                        MouseArea { anchors.fill:parent; onClicked: listView.model.insert(count - 1, {"title" : "Juice"}) }
+                        MouseArea { anchors.fill:parent; onClicked: listView.model.insert(count - 1, {"title" : ""}) }
                     }
                 }
             }
@@ -110,6 +132,12 @@ ListView {
                 // Make sure delayRemove is set back to false so that the item can be destroyed
                 PropertyAction { target: dragArea; property: "ListView.delayRemove"; value: false }
             }
+        }
+    }
+
+    Component.onCompleted: {
+        if (listView.model.count < 1) {
+            listView.model.append({title: ""})
         }
     }
 }
