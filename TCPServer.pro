@@ -1,4 +1,4 @@
-QT += quick bluetooth network serialport httpserver
+QT += quick bluetooth network serialport
 CONFIG += c++11
 
 # The following define makes your compiler emit warnings if you use
@@ -6,6 +6,7 @@ CONFIG += c++11
 # depend on your compiler). Refer to the documentation for the
 # deprecated API to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
+DEFINES += PROJECT_PATH=\\\"$$PWD\\\"
 
 # You can also make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -16,7 +17,8 @@ SOURCES += \
         main.cpp \
     helper/page.cpp \
     helper/engine.cpp \
-    helper/server.cpp
+    helper/server.cpp \
+    helper/jsonobject.cpp
 
 RESOURCES += qml.qrc
 
@@ -39,4 +41,5 @@ android {
 HEADERS += \  
     helper/page.h \
     helper/engine.h \
-    helper/server.h
+    helper/server.h \
+    helper/jsonobject.h
