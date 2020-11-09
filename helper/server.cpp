@@ -159,7 +159,86 @@ void TcpServer::slotDisconnected()
 }
 
 
+
 #pragma mark - http server
+
+HttpServer::HttpServer(QObject *parent) : AbstractServer (parent)
+{
+    server = new QHttpServer();
+    server->route("/", [this]() {
+        return _patternText;
+    });
+}
+
+HttpServer::~HttpServer()
+{
+    stop();
+    if (server) {
+        delete server;
+        server = nullptr;
+    }
+}
+
+void HttpServer::start()
+{
+    if (server)
+    {
+        auto tcp = settings()["http"];
+        auto adr = tcp.isObject() ? tcp["ip"  ].toString() : QString("");
+        auto prt = tcp.isObject() ? tcp["port"].toString() : QString("");
+
+        QRegExp ipReg("\\d{1,3}.\\d{1,3}.\\d{1,3}.\\d{1,3}");
+        QRegExp portReg("\\d+");
+
+        auto address = ipReg.exactMatch(adr) ? QHostAddress(adr) : QHostAddress(QHostAddress::Any);
+        auto port    = portReg.exactMatch(prt) ? quint16(prt.toLong()) : quint16(0);
+
+        if (server->listen(address, port))
+        {
+            auto message = QString("<font color=\"#00E300\"><b>HttpServer</b> is started: ") + address.toString() + ":" + QString::number(port) + QString("</font>");
+            _started = true;
+            emit serverStarted(message);
+        }
+    }
+}
+
+void HttpServer::stop()
+{
+    if (server && _started) {
+        _started = false;
+        auto message = QString("<font color=\"#FFFF00\"><b>HttpServer</b> stopped!</font>");
+        emit serverStopped(message);
+    }
+}
+
+AbstractServer::Response HttpServer::sendData(QString data)
+{
+    Response resp;
+
+    if (!server) {
+        resp.message = QString("<font color=\"#FFFF00\">Can't send data:( - HttpServer not valid!</font>");
+    } else {
+        if (!_started) {
+            resp.message = QString("<font color=\"#FFFF00\">Can't send data:( - HttpServer is not started!</font>");
+        } else {
+            _patternText = data;
+            resp.status = true;
+            resp.message = QString("<b>Will send data[%1]</b>: ").arg(QString::number(data.size())) + data;
+        }
+    }
+
+    return resp;
+}
+
+bool HttpServer::isValid()
+{
+    return !server ? false : true;
+}
+
+bool HttpServer::started()
+{
+    return _started;
+}
 
 
 #pragma mark - comm server

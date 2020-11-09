@@ -30,8 +30,8 @@ void Page::setType(int type)
     }
 
     switch (type) {
-        case 0: server = new TcpServer(this); break;
-        case 1: break;
+        case 0: server = new TcpServer(this);  break;
+        case 1: server = new HttpServer(this); break;
         case 2: break;
         case 3: break;
     }

@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QTcpServer>
 #include <QTcpSocket>
+#include <QHttpServer>
 #include <QJsonObject>
 
 class AbstractServer : public QObject
@@ -76,6 +77,33 @@ public slots:
 private:
     QTcpServer * server;
     QTcpSocket * socket;
+};
+
+class HttpServer : public AbstractServer
+{
+    Q_OBJECT
+public:
+    explicit HttpServer(QObject *parent = nullptr);
+    ~HttpServer() override;
+
+    void start() override;
+    void stop() override;
+
+    Response sendData(QString data) override;
+    bool isValid() override;
+    bool started() override;
+
+signals:
+
+public slots:
+//    void newConnection();
+//    void readyRead();
+//    void slotDisconnected();
+
+private:
+    QString _patternText;
+    QHttpServer * server;
+    bool _started = false;
 };
 
 #endif // SERVER_H
