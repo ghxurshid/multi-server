@@ -17,6 +17,7 @@ class Page : public QQuickItem
     Q_PROPERTY(QString settings READ settings NOTIFY settingsChanged WRITE setSettings)
 public:
     Page(QQuickItem *parent = nullptr);
+    ~Page();
 
     int type();
     void setType(int type);

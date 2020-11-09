@@ -6,6 +6,23 @@ Page::Page(QQuickItem *parent) : QQuickItem (parent)
     server = nullptr;
 }
 
+Page::~Page()
+{
+    if (server) {
+        auto stt = server->settings();
+        auto doc = QJsonDocument(stt);
+
+        QFile file(QCoreApplication::applicationDirPath() + "/config.cfg");
+        if (file.open(QIODevice::WriteOnly)) {
+            file.write(doc.toJson(QJsonDocument::Indented));
+            file.close();
+        }
+
+        delete server;
+        server = nullptr;
+    }
+}
+
 
 #pragma mark - qproperty definitions
 
@@ -40,8 +57,7 @@ void Page::setType(int type)
 }
 
 bool Page::connectionState()
-{
-//    return connectionState_;
+{ 
     bool conn = false;
     if (server) conn = server->started();
     return conn;

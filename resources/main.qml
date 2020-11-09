@@ -135,12 +135,46 @@ ApplicationWindow {
                                 color: 'teal'
                                 implicitWidth: 200
                                 implicitHeight: 200
+
+                                ColumnLayout {
+                                    height: parent.height
+                                    width: dp(30)
+                                    anchors {
+                                        left: parent.left
+                                        leftMargin: dp(5)
+                                    }
+
+                                    ComboBox {
+                                        model: ["First", "Second", "Third"]
+                                    }
+
+                                    TextField {
+
+                                    }
+                                }
                             }
 
                             Rectangle {
                                 color: 'plum'
                                 implicitWidth: 300
                                 implicitHeight: 200
+
+                                ColumnLayout {
+                                    height: parent.height
+                                    width: dp(30)
+                                    anchors {
+                                        left: parent.left
+                                        leftMargin: dp(5)
+                                    }
+
+                                    ComboBox {
+                                        model: ["First", "Second", "Third"]
+                                    }
+
+                                    TextField {
+
+                                    }
+                                }
                             }
                         }
                     }
@@ -202,10 +236,6 @@ ApplicationWindow {
 
                         ListModel {
                             id: strListModel
-
-//                            ListElement { title: "Lorem" }
-//                            ListElement { title: "Ipsum" }
-//                            ListElement { title: "" }
                         }
 
                         CListView {
@@ -237,8 +267,7 @@ ApplicationWindow {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
                                 Layout.minimumHeight: dp(10)
-                                color: backgroundColor
-                                //color: "lightblue"
+                                color: backgroundColor                               
                                 border.color: borderColor
                                 radius: dp(radius_)
 
@@ -273,11 +302,7 @@ ApplicationWindow {
                         radius: dp(radius_)
 
                         ListModel {
-                            id: qListModel
-
-                            ListElement { title: "altitude" }
-                            ListElement { title: "longitude" }
-                            ListElement { title: "" }
+                            id: qListModel                            
                         }
 
                         CListView {
