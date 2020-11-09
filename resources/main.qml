@@ -7,6 +7,7 @@ import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.1
 import QtQuick.Controls 2.5
 import Custom 1.0
+import QtQuick.Layouts 1.12
 
 ApplicationWindow {
     id: mainWindow
@@ -54,9 +55,9 @@ ApplicationWindow {
                     anchors.fill: parent
                     anchors.margins: dp(margin_)
 
-                    Item {
-                        Layout.fillWidth: true
+                    Item {                        
                         height: dp(10)
+                        width: leftTabBar.implicitWidth
                         Layout.alignment: Qt.AlignTop
                         Layout.leftMargin: dp(3)
                         Layout.topMargin: dp(3)
@@ -64,7 +65,7 @@ ApplicationWindow {
                         Container {
                             id: leftTabBar
 
-                            currentIndex: 1
+                            currentIndex: -1
 
                             Layout.fillWidth: false
                             Layout.fillHeight: false
@@ -80,6 +81,7 @@ ApplicationWindow {
                                 buttons: columnLayout.children
                                 onClicked: {
                                     mainWrapper.type = button.index
+                                    leftTabBar.currentIndex = button.index
                                 }
                             }
 
@@ -116,6 +118,37 @@ ApplicationWindow {
                                 index: 3
                             }
                         }
+                    }
+
+                    Item {
+                        id: settingsLayoutItem
+                        Layout.fillWidth: true
+                        height: parent.height
+
+                        StackLayout {
+                            id: settingsLayout
+                            anchors.fill: parent
+                            currentIndex: mainWrapper.type
+                            visible: mainWrapper.type >= 0
+
+                            Rectangle {
+                                color: 'teal'
+                                implicitWidth: 200
+                                implicitHeight: 200
+                            }
+
+                            Rectangle {
+                                color: 'plum'
+                                implicitWidth: 300
+                                implicitHeight: 200
+                            }
+                        }
+                    }
+
+
+                    Rectangle {
+
+                        color: "lightblue"
                     }
 
                     Button {
@@ -335,3 +368,7 @@ ApplicationWindow {
         }
     }
 }
+
+
+
+

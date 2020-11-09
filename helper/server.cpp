@@ -1,8 +1,6 @@
 #include "server.h"
 #include <QRegExp>
 
-
-
 #pragma mark - abstract server
 
 AbstractServer::AbstractServer(QObject *parent) : QObject(parent)
@@ -15,12 +13,12 @@ AbstractServer::AbstractServer(QObject *parent) : QObject(parent)
     connect(this, SIGNAL(dataReceived(QString)), parent, SLOT(dataReceived(QString)));
 }
 
-const QJsonObject &AbstractServer::settings()
+const JsonObject &AbstractServer::settings()
 {
     return this->settings_;
 }
 
-void AbstractServer::setSettings(const QJsonObject &settings)
+void AbstractServer::setSettings(const JsonObject &settings)
 {
     this->settings_ = settings;
 }
@@ -94,8 +92,8 @@ AbstractServer::Response TcpServer::sendData(QString data)
         } else {
             if (socket)
             {
-                 qDebug() << "socket is" << (socket->isReadable() ? " " : " not ") << "readable";
-                 qDebug() << "socket is" << (socket->isWritable() ? " " : " not ") << "writable";
+                qDebug() << "socket is" << (socket->isReadable() ? " " : " not ") << "readable";
+                qDebug() << "socket is" << (socket->isWritable() ? " " : " not ") << "writable";
                 qint64 size = socket->write(data.toLocal8Bit());
                 qDebug() << size;
                 if (size == data.size())

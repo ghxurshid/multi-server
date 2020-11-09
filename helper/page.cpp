@@ -63,6 +63,21 @@ QString Page::sendText()
     return sendText_;
 }
 
+QString Page::settings()
+{
+    QString res = "{}";
+    if (server) {
+        auto doc = QJsonDocument(server->settings());
+        res = QString(doc.toJson());
+    }
+    return res;
+}
+
+void Page::setSettings(QString settings)
+{
+
+}
+
 
 #pragma mark - public functions
 
