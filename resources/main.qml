@@ -125,6 +125,19 @@ ApplicationWindow {
                         Layout.fillWidth: true
                         height: parent.height
 
+                        function applySettings() {
+                            var stt = JSON.parse(mainWrapper.jsonSettings)
+                            var srv = stt.server
+                            if (srv) {
+                                var tcpStt = srv.tcp
+                                if (typeof(tcpStt) != undefined) {
+
+                                    tcpIP.currentIndex = tcpStt.ip ? tcpIP.find(tcpStt.ip) : 0
+                                    tcpPort.text = tcpStt.port ? tcpStt.port : 0
+                                }
+                            }
+                        }
+
                         StackLayout {
                             id: settingsLayout
                             anchors.fill: parent
@@ -145,11 +158,21 @@ ApplicationWindow {
                                     }
 
                                     ComboBox {
-                                        model: ["First", "Second", "Third"]
+                                        id: tcpIP
+                                        model: ["All", "192.168.1.1", "192.168.1.2", "192.168.1.3"]
+                                        onActivated: {
+                                            var txt = tcpIP.currentText
+                                            mainWrapper.jsonSettings = "{\"server\" : {\"tcp\" : {\"ip\" : \"" + txt + "\"}}}"
+                                        }
                                     }
 
                                     TextField {
-
+                                        id: tcpPort
+                                        text: qsTr("0")
+                                        onAccepted: {
+                                            mainWrapper.jsonSettings = "{\"server\" : {\"tcp\" : {\"port\" : \"" + tcpPort.text + "\"}}}"
+                                            focus = false
+                                        }
                                     }
                                 }
                             }
@@ -176,6 +199,10 @@ ApplicationWindow {
                                     }
                                 }
                             }
+                        }
+
+                        Component.onCompleted: {
+                            applySettings()
                         }
                     }
 

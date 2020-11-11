@@ -6,6 +6,7 @@
 #include <QJsonDocument>
 
 #include "server.h"
+#include "jsonobject.h"
 
 class Page : public QQuickItem
 {
@@ -14,7 +15,7 @@ class Page : public QQuickItem
     Q_PROPERTY(bool connectionState READ connectionState WRITE setConnectionState NOTIFY connectionStateChanged)
     Q_PROPERTY(QString recvText READ recvText NOTIFY recvTextChanged)
     Q_PROPERTY(QString sendText READ sendText NOTIFY sendTextChanged)
-    Q_PROPERTY(QString settings READ settings NOTIFY settingsChanged WRITE setSettings)
+    Q_PROPERTY(QString jsonSettings READ jsonSettings NOTIFY settingsChanged WRITE setJsonSettings)
 public:
     Page(QQuickItem *parent = nullptr);
     ~Page();
@@ -28,8 +29,11 @@ public:
     QString recvText();
     QString sendText();
 
-    QString settings();
-    void setSettings(QString settings);
+    QString jsonSettings();
+    void setJsonSettings(QString stt);
+
+    const JsonObject &settings();
+    void setSettings(const JsonObject & settings);
 
     Q_INVOKABLE bool startServer();
     Q_INVOKABLE void sendData(QString data);
@@ -61,6 +65,7 @@ private:
     QString sendText_;
 
     AbstractServer * server;
+    JsonObject settings_;
 };
 
 #endif // PAGE_H

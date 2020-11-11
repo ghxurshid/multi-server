@@ -10,7 +10,7 @@ JsonObject::JsonObject(const QJsonObject &other) : QJsonObject (other)
 
 }
 
-void JsonObject::append(JsonObject &json)
+void JsonObject::update(JsonObject &json)
 {
     for (auto key : json.keys()) {
         QJsonValue v1 = value(key);

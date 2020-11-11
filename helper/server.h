@@ -7,8 +7,6 @@
 #include <QHttpServer>
 #include <QJsonObject>
 
-#include "jsonobject.h"
-
 class AbstractServer : public QObject
 {
     Q_OBJECT
@@ -35,11 +33,6 @@ public:
     virtual bool isValid() = 0;
     virtual bool started() = 0; 
 
-    const JsonObject &settings();
-    void setSettings(const JsonObject & settings);
-
-
-
 signals:
     void serverStarted(QString serverInfo);
     void serverStopped(QString serverInfo);
@@ -50,8 +43,7 @@ signals:
 
 public slots:
 
-private:
-    JsonObject settings_;
+private: 
 
 };
 

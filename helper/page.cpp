@@ -4,12 +4,22 @@
 Page::Page(QQuickItem *parent) : QQuickItem (parent)
 {
     server = nullptr;
+
+    QFile file(QCoreApplication::applicationDirPath() + "/config.cfg");
+    if (file.open(QIODevice::ReadOnly)) {
+        auto doc = QJsonDocument::fromJson(file.readAll());
+        file.close();
+        if (!doc.isEmpty()) {
+            this->settings_ = doc.object();
+        }
+    }
+
 }
 
 Page::~Page()
 {
     if (server) {
-        auto stt = server->settings();
+        auto stt = settings();
         auto doc = QJsonDocument(stt);
 
         QFile file(QCoreApplication::applicationDirPath() + "/config.cfg");
@@ -79,21 +89,35 @@ QString Page::sendText()
     return sendText_;
 }
 
-QString Page::settings()
+QString Page::jsonSettings()
 {
-    QString res = "{}";
-    if (server) {
-        auto doc = QJsonDocument(server->settings());
-        res = QString(doc.toJson());
+    QJsonDocument doc(settings_);
+    return doc.toJson(QJsonDocument::Compact);
+}
+
+void Page::setJsonSettings(QString stt)
+{
+    auto doc = QJsonDocument::fromJson(stt.toLocal8Bit());
+    if (!doc.isEmpty()) {
+        auto objStt = JsonObject(doc.object());
+        this->settings_.update(objStt);
+        emit settingsChanged();
+        qDebug() << settings_;
     }
-    return res;
 }
 
-void Page::setSettings(QString settings)
+const JsonObject &Page::settings()
+{
+    return this->settings_;
+}
+
+void Page::setSettings(const JsonObject &settings)
 {
 
+    auto stt = settings;
+    this->settings_.update(stt);
+    emit settingsChanged();
 }
-
 
 #pragma mark - public functions
 

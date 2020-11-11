@@ -12,7 +12,7 @@ public:
     JsonObject();
     JsonObject(const QJsonObject &other);
 
-    void append(JsonObject & json);
+    void update(JsonObject & json);
 
 private:
     QJsonValue helper(QJsonValue &val1, QJsonValue &val2);

@@ -1,5 +1,6 @@
-#include "server.h"
 #include <QRegExp>
+#include "server.h"
+#include "page.h"
 
 #pragma mark - abstract server
 
@@ -12,17 +13,6 @@ AbstractServer::AbstractServer(QObject *parent) : QObject(parent)
 
     connect(this, SIGNAL(dataReceived(QString)), parent, SLOT(dataReceived(QString)));
 }
-
-const JsonObject &AbstractServer::settings()
-{
-    return this->settings_;
-}
-
-void AbstractServer::setSettings(const JsonObject &settings)
-{
-    this->settings_ = settings;
-}
-
 
 #pragma mark - tcp server
 
@@ -49,7 +39,8 @@ void TcpServer::start()
     qDebug() << "Hello";
     if (server)
     {
-        auto tcp = settings()["tcp"];
+        auto parent_ = reinterpret_cast<Page*>(parent());
+        auto tcp = parent_->settings()["tcp"];
         auto adr = tcp.isObject() ? tcp["ip"  ].toString() : QString("");
         auto prt = tcp.isObject() ? tcp["port"].toString() : QString("");
 
@@ -181,7 +172,8 @@ void HttpServer::start()
 {
     if (server)
     {
-        auto tcp = settings()["http"];
+        auto parent_ = reinterpret_cast<Page*>(parent());
+        auto tcp = parent_->settings()["tcp"];
         auto adr = tcp.isObject() ? tcp["ip"  ].toString() : QString("");
         auto prt = tcp.isObject() ? tcp["port"].toString() : QString("");
 
