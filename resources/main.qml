@@ -127,13 +127,25 @@ ApplicationWindow {
 
                         function applySettings() {
                             var stt = JSON.parse(mainWrapper.jsonSettings)
-                            var srv = stt.server
-                            if (srv) {
-                                var tcpStt = srv.tcp
-                                if (typeof(tcpStt) != undefined) {
+                            if (stt && stt.hasOwnProperty("server")) {
+                                var srvStt = stt.server
 
-                                    tcpIP.currentIndex = tcpStt.ip ? tcpIP.find(tcpStt.ip) : 0
-                                    tcpPort.text = tcpStt.port ? tcpStt.port : 0
+                                if (typeof(srvStt) != undefined) {
+                                    if (srvStt.hasOwnProperty("tcp")) {
+                                        var tcpStt = srvStt.tcp
+                                        if (typeof(tcpStt) != undefined) {
+                                            tcpIP.currentIndex = tcpStt.hasOwnProperty("ip") ? tcpIP.find(tcpStt.ip) : 0
+                                            tcpPort.text = tcpStt.hasOwnProperty("port") ? tcpStt.port : 0
+                                        }
+                                    }
+
+                                    if (srvStt.hasOwnProperty("http")) {
+                                        var httpStt = srvStt.http
+                                        if (typeof(httpStt) != undefined) {
+                                            httpIP.currentIndex = httpStt.hasOwnProperty("ip") ? httpIP.find(httpStt.ip) : 0
+                                            httpPort.text = httpStt.hasOwnProperty("port") ? httpStt.port : 0
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -158,8 +170,8 @@ ApplicationWindow {
                                     }
 
                                     ComboBox {
-                                        id: tcpIP
-                                        model: ["All", "192.168.1.1", "192.168.1.2", "192.168.1.3"]
+                                        id: tcpIP                                        
+                                        model: mainWrapper.networkList
                                         onActivated: {
                                             var txt = tcpIP.currentText
                                             mainWrapper.jsonSettings = "{\"server\" : {\"tcp\" : {\"ip\" : \"" + txt + "\"}}}"
@@ -191,11 +203,21 @@ ApplicationWindow {
                                     }
 
                                     ComboBox {
-                                        model: ["First", "Second", "Third"]
+                                        id: httpIP
+                                        model: mainWrapper.networkList
+                                        onActivated: {
+                                            var txt = httpIP.currentText
+                                            mainWrapper.jsonSettings = "{\"server\" : {\"http\" : {\"ip\" : \"" + txt + "\"}}}"
+                                        }
                                     }
 
                                     TextField {
-
+                                        id: httpPort
+                                        text: qsTr("0")
+                                        onAccepted: {
+                                            mainWrapper.jsonSettings = "{\"server\" : {\"http\" : {\"port\" : \"" + httpPort.text + "\"}}}"
+                                            focus = false
+                                        }
                                     }
                                 }
                             }
@@ -208,7 +230,6 @@ ApplicationWindow {
 
 
                     Rectangle {
-
                         color: "lightblue"
                     }
 

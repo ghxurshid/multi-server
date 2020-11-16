@@ -3,5 +3,5 @@
 
 Engine::Engine(QObject *parent)
 {    
-    qmlRegisterType<Page>("Custom", 1, 0, "Wrapper");
+    qmlRegisterType<Page>("Custom", 1, 0, "Wrapper");    
 }

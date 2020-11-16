@@ -40,7 +40,8 @@ void TcpServer::start()
     if (server)
     {
         auto parent_ = reinterpret_cast<Page*>(parent());
-        auto tcp = parent_->settings()["tcp"];
+        auto srv = parent_->settings()["server"];
+        auto tcp = srv.isObject() ? srv["tcp"] : JsonObject();
         auto adr = tcp.isObject() ? tcp["ip"  ].toString() : QString("");
         auto prt = tcp.isObject() ? tcp["port"].toString() : QString("");
 
@@ -173,7 +174,8 @@ void HttpServer::start()
     if (server)
     {
         auto parent_ = reinterpret_cast<Page*>(parent());
-        auto tcp = parent_->settings()["tcp"];
+        auto srv = parent_->settings()["server"];
+        auto tcp = srv.isObject() ? srv["http"] : JsonObject();
         auto adr = tcp.isObject() ? tcp["ip"  ].toString() : QString("");
         auto prt = tcp.isObject() ? tcp["port"].toString() : QString("");
 

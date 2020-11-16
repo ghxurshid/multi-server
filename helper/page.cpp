@@ -113,10 +113,14 @@ const JsonObject &Page::settings()
 
 void Page::setSettings(const JsonObject &settings)
 {
-
     auto stt = settings;
     this->settings_.update(stt);
     emit settingsChanged();
+}
+
+QObject *Page::networkList()
+{
+    return &nlModel;
 }
 
 #pragma mark - public functions
@@ -136,7 +140,8 @@ bool Page::startServer()
 }
 
 void Page::sendData(QString data)
-{qDebug() << Q_FUNC_INFO << data;
+{
+    qDebug() << Q_FUNC_INFO << data;
     if (server && server->isValid()) {
         auto resp = server->sendData(data);
         sendText_ += resp.message + "<br>";
