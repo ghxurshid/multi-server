@@ -42,8 +42,6 @@ public:
     Q_INVOKABLE bool startServer();
     Q_INVOKABLE void sendData(QString data);
 
-
-
 signals:
     void typeChanged();    
     void recvTextChanged();
