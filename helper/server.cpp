@@ -197,6 +197,11 @@ void HttpServer::start()
 void HttpServer::stop()
 {
     if (server && _started) {
+        for (auto srv : server->servers()) {
+            if (srv && srv->isListening()) {
+                srv->close();
+            }
+        }
         _started = false;
         auto message = QString("<font color=\"#FFFF00\"><b>HttpServer</b> stopped!</font>");
         emit serverStopped(message);

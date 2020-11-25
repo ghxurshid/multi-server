@@ -126,7 +126,7 @@ QObject *Page::networkList()
 #pragma mark - public functions
 
 bool Page::startServer()
-{
+{    
     if (server && server->isValid()) {
         if (server->started()) {
             server->stop();
@@ -139,7 +139,7 @@ bool Page::startServer()
     return true;
 }
 
-void Page::sendData(QString data)
+void Page::sendData(QString data, QString end)
 {
     qDebug() << Q_FUNC_INFO << data;
     if (server && server->isValid()) {
@@ -184,6 +184,24 @@ void Page::dataReceived(QString data)
     qDebug() << "dataReceived: " << data;
     recvText_ += data + "<br>";
     emit recvTextChanged();
+}
+
+QString Page::oprintf(QString format, QList<char> args)
+{
+    QRegExp exp("%[idfsb]");
+    int pos = 0;
+    while (args.size() > 0 && (pos = format.indexOf(exp, pos)) >= 0) {
+        int npos = pos + 1;
+        format.replace(npos, 1, "1");
+        format = format.arg(args[0]);
+        args.erase(args.begin());
+    }
+    return format;
+}
+
+QList<char> Page::listOfArgs()
+{
+
 }
 
 

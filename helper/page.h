@@ -40,9 +40,7 @@ public:
     QObject *networkList();
 
     Q_INVOKABLE bool startServer();
-    Q_INVOKABLE void sendData(QString data);
-
-
+    Q_INVOKABLE void sendData(QString data, QString end);
 
 signals:
     void typeChanged();    
@@ -59,6 +57,11 @@ public slots:
     void clientDisconnected(QString clientInfo);
 
     void dataReceived(QString data);
+
+
+protected:
+    QString oprintf(QString format, QList<char> args);
+    QList<char> listOfArgs();
 
 private:
     int type_ = -1;

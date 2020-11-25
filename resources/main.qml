@@ -284,6 +284,7 @@ ApplicationWindow {
 
                         ListModel {
                             id: strListModel
+                            objectName: "strListModel"
                         }
 
                         CListView {
@@ -350,14 +351,15 @@ ApplicationWindow {
                         radius: dp(radius_)
 
                         ListModel {
-                            id: qListModel                            
+                            id: argListModel
+                            objectName: "argListModel"
                         }
 
                         CListView {
                             id: qList
                             anchors.fill: parent
                             anchors.margins: dp(margin_)
-                            model: qListModel
+                            model: argListModel
                         }
                     }
                 }
