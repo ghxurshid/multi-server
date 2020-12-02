@@ -291,7 +291,7 @@ ApplicationWindow {
                             id: strList
                             anchors.fill: parent
                             anchors.margins: dp(margin_)
-                            model: strListModel
+                            model: mainWrapper.leftArgList
                         }
                     }
 
@@ -359,7 +359,7 @@ ApplicationWindow {
                             id: qList
                             anchors.fill: parent
                             anchors.margins: dp(margin_)
-                            model: argListModel
+                            model: mainWrapper.rightArgList
                         }
                     }
                 }
@@ -434,7 +434,7 @@ ApplicationWindow {
                             text: qsTr("Send")
                             onClicked: {
                                 console.log(sendStringData.text)
-                                mainWrapper.sendData(sendStringData.text)
+                                mainWrapper.sendData(sendStringData.text, sendEndData.text)
                             }
                         }
                     }

@@ -57,10 +57,10 @@ void Page::setType(int type)
     }
 
     switch (type) {
-        case 0: server = new TcpServer(this);  break;
-        case 1: server = new HttpServer(this); break;
-        case 2: break;
-        case 3: break;
+    case 0: server = new TcpServer(this);  break;
+    case 1: server = new HttpServer(this); break;
+    case 2: break;
+    case 3: break;
     }
 
     emit typeChanged();
@@ -120,7 +120,17 @@ void Page::setSettings(const JsonObject &settings)
 
 QObject *Page::networkList()
 {
-    return &nlModel;
+    return &m_networklist;
+}
+
+QObject *Page::leftArgList()
+{
+    return &m_leftArgList;
+}
+
+QObject *Page::rightArgList()
+{
+    return &m_rightArgList;
 }
 
 #pragma mark - public functions
@@ -141,6 +151,7 @@ bool Page::startServer()
 
 void Page::sendData(QString data, QString end)
 {
+    Q_UNUSED(end)
     qDebug() << Q_FUNC_INFO << data;
     if (server && server->isValid()) {
         auto resp = server->sendData(data);
@@ -159,7 +170,7 @@ void Page::serverStarted(QString serverInfo)
 
 void Page::serverStopped(QString serverInfo)
 {
-    qDebug() << "serverStopped: " << serverInfo;    
+    qDebug() << "serverStopped: " << serverInfo;
     recvText_ += serverInfo + "<br>";
     emit recvTextChanged();
     emit connectionStateChanged();
@@ -198,10 +209,3 @@ QString Page::oprintf(QString format, QList<char> args)
     }
     return format;
 }
-
-QList<char> Page::listOfArgs()
-{
-
-}
-
-

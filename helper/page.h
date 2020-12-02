@@ -18,6 +18,8 @@ class Page : public QQuickItem
     Q_PROPERTY(QString sendText READ sendText NOTIFY sendTextChanged)
     Q_PROPERTY(QString jsonSettings READ jsonSettings NOTIFY settingsChanged WRITE setJsonSettings)
     Q_PROPERTY(QObject * networkList READ networkList NOTIFY networkListChanged)
+    Q_PROPERTY(QObject * leftArgList READ leftArgList NOTIFY leftArgListChanged)
+    Q_PROPERTY(QObject * rightArgList READ rightArgList NOTIFY rightArgListChanged)
 public:
     Page(QQuickItem *parent = nullptr);
     ~Page();
@@ -38,6 +40,8 @@ public:
     void setSettings(const JsonObject & settings);
 
     QObject *networkList();
+    QObject *leftArgList();
+    QObject *rightArgList();
 
     Q_INVOKABLE bool startServer();
     Q_INVOKABLE void sendData(QString data, QString end);
@@ -48,7 +52,10 @@ signals:
     void sendTextChanged();
     void settingsChanged();
     void networkListChanged();
+    void leftArgListChanged();
+    void rightArgListChanged();
     void connectionStateChanged();
+
 
 public slots:   
     void serverStarted(QString serverInfo);
@@ -60,8 +67,7 @@ public slots:
 
 
 protected:
-    QString oprintf(QString format, QList<char> args);
-    QList<char> listOfArgs();
+    QString oprintf(QString format, QList<char> args);     
 
 private:
     int type_ = -1;
@@ -73,7 +79,9 @@ private:
     AbstractServer * server;
     JsonObject settings_;
 
-    NetworkListModel nlModel;
+    NetworkListModel m_networklist;
+    ArgumentsListModel m_leftArgList;
+    ArgumentsListModel m_rightArgList;
 };
 
 #endif // PAGE_H
