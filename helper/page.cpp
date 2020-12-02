@@ -146,7 +146,7 @@ void Page::sendData(QString data)
         auto resp = server->sendData(data);
         sendText_ += resp.message + "<br>";
         emit sendTextChanged();
-    }
+    } 
 }
 
 void Page::serverStarted(QString serverInfo)
