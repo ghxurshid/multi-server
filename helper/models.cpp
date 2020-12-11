@@ -77,7 +77,7 @@ int ArgumentsListModel::rowCount(const QModelIndex &parent) const
 }
 
 QVariant ArgumentsListModel::data(const QModelIndex &index, int role) const
-{
+{qDebug() << Q_FUNC_INFO;
     int row = index.row();
     int size = m_data.size() + 1;
     if (!index.isValid() || row >= size) {
@@ -115,24 +115,26 @@ bool ArgumentsListModel::setData(const QModelIndex &index, const QVariant &value
 }
 
 void ArgumentsListModel::move(int from, int to)
-{
-    qDebug() << from << " -> " << to;
-    beginMoveRows(QModelIndex(), from, from, QModelIndex(), to);
-    m_data.move(from, to);
-    endMoveRows();
+{   
+    QModelIndex index;
+    if (beginMoveRows(index, from, from, index, to > from ? to + 1 : to)) {
+            m_data.move(from, to);
+            endMoveRows();
+    }
 }
 
 void ArgumentsListModel::insert(int index, QString data)
 {
     qDebug() << data;
-    beginInsertRows( QModelIndex(), index, index ); //notify views and proxy models that a line will be inserted
+    beginInsertRows(QModelIndex(), index, index); //notify views and proxy models that a line will be inserted
     m_data.insert(index, {data, false}); // do the modification to the model data
     endInsertRows();
+
 }
 
 void ArgumentsListModel::remove(int index)
 {
-    beginRemoveRows( QModelIndex(), index, index ); //notify views and proxy models that a line will be deleted
+    beginRemoveRows(QModelIndex(), index, index); //notify views and proxy models that a line will be deleted
     m_data.removeAt(index); // do the modification to the model data
     endRemoveRows();
 }
