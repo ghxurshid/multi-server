@@ -65,7 +65,7 @@ ListView {
                             id: costText
                             text: title
                             font.pointSize: 15
-                            color: "white"
+                            color: selected ? "red" : "white"
                             font.bold: true
                             Layout.alignment: Qt.AlignLeft
                             Layout.fillWidth: true
@@ -75,8 +75,7 @@ ListView {
                         TextField {
                             id: costTextInput
                             text: title
-                            font.pointSize: 15
-                            //color: "white"
+                            font.pointSize: 15                            
                             font.bold: true
                             Layout.alignment: Qt.AlignLeft
                             Layout.fillWidth: true
@@ -86,6 +85,7 @@ ListView {
 
                             onAccepted: {                                
                                 model.title = costTextInput.text
+                                model.selected = false
                                 costTextInput.focus = false
                             }
                         }
@@ -112,8 +112,6 @@ ListView {
                     id: addButton
                     visible: isLast
                     anchors.fill: parent
-
-
 
                     Image {
                         anchors.centerIn: parent

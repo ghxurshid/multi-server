@@ -6,8 +6,8 @@ import QtQuick.Controls 1.4
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.1
 import QtQuick.Controls 2.5
-import Custom 1.0
 import QtQuick.Layouts 1.12
+import Custom 1.0
 
 ApplicationWindow {
     id: mainWindow
@@ -72,10 +72,7 @@ ApplicationWindow {
                             Layout.alignment: Qt.AlignTop
 
                             anchors.leftMargin: dp(2)
-                            anchors.topMargin: dp(5)
-                            onCurrentIndexChanged: {
-                                console.log(currentIndex)
-                            }
+                            anchors.topMargin: dp(5)                             
 
                             ButtonGroup {
                                 buttons: columnLayout.children
@@ -156,8 +153,7 @@ ApplicationWindow {
                             currentIndex: mainWrapper.type
                             visible: mainWrapper.type >= 0
 
-                            Rectangle {
-                                color: 'teal'
+                            Item {
                                 implicitWidth: 200
                                 implicitHeight: 200
 
@@ -189,8 +185,7 @@ ApplicationWindow {
                                 }
                             }
 
-                            Rectangle {
-                                color: 'plum'
+                            Item {
                                 implicitWidth: 300
                                 implicitHeight: 200
 
@@ -394,10 +389,7 @@ ApplicationWindow {
                             anchors.leftMargin: dp(margin_)
                             verticalAlignment: TextInput.AlignVCenter
                             font.pointSize: 15
-                            clip: true
-                            Component.onCompleted: {
-                                console.log(height)
-                            }
+                            clip: true                            
                         }
                     }
 
@@ -432,8 +424,7 @@ ApplicationWindow {
                             anchors.fill: parent
                             radius: dp(radius_)
                             text: qsTr("Send")
-                            onClicked: {
-                                console.log(sendStringData.text)
+                            onClicked: {                                
                                 mainWrapper.sendData(sendStringData.text, sendEndData.text)
                             }
                         }

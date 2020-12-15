@@ -14,6 +14,7 @@ AbstractServer::AbstractServer(QObject *parent) : QObject(parent)
     connect(this, SIGNAL(dataReceived(QString)), parent, SLOT(dataReceived(QString)));
 }
 
+
 #pragma mark - tcp server
 
 TcpServer::TcpServer(QObject *parent) : AbstractServer (parent)
@@ -35,8 +36,7 @@ TcpServer::~TcpServer()
 }
 
 void TcpServer::start()
-{
-    qDebug() << "Hello";
+{    
     if (server)
     {
         auto parent_ = reinterpret_cast<Page*>(parent());
@@ -83,11 +83,8 @@ AbstractServer::Response TcpServer::sendData(QString data)
             resp.message = QString("<font color=\"#FFFF00\">Can't send data:( - TcpServer is not started!</font>");
         } else {
             if (socket)
-            {
-                qDebug() << "socket is" << (socket->isReadable() ? " " : " not ") << "readable";
-                qDebug() << "socket is" << (socket->isWritable() ? " " : " not ") << "writable";
-                qint64 size = socket->write(data.toLocal8Bit());
-                qDebug() << size;
+            {                
+                qint64 size = socket->write(data.toLocal8Bit());                
                 if (size == data.size())
                 {
                     resp.status = true;
@@ -120,7 +117,7 @@ bool TcpServer::started()
 }
 
 void TcpServer::newConnection()
-{   qDebug() << Q_FUNC_INFO;
+{
     if (server && server->hasPendingConnections())
     {
         socket = server->nextPendingConnection();
@@ -149,12 +146,16 @@ void TcpServer::slotDisconnected()
 }
 
 
-
 #pragma mark - http server
 
 HttpServer::HttpServer(QObject *parent) : AbstractServer (parent)
 {
     server = new QHttpServer();
+
+    server->route("/", [this]() {        
+        return _patternText;
+    });
+
     server->route("/", [this]() {
         return _patternText;
     });

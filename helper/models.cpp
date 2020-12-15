@@ -77,7 +77,7 @@ int ArgumentsListModel::rowCount(const QModelIndex &parent) const
 }
 
 QVariant ArgumentsListModel::data(const QModelIndex &index, int role) const
-{qDebug() << Q_FUNC_INFO;
+{
     int row = index.row();
     int size = m_data.size() + 1;
     if (!index.isValid() || row >= size) {
@@ -91,16 +91,16 @@ QVariant ArgumentsListModel::data(const QModelIndex &index, int role) const
         {
             return QVariant(m_data[row].title);
         }
+        else if (role == Roles::Selected)
+        {
+            return  QVariant(m_data[row].selected);
+        }
     }
     return QVariant();
 }
 
 bool ArgumentsListModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    Q_UNUSED(index)
-    Q_UNUSED(value)
-    Q_UNUSED(role)
-    qDebug() << value.toString();
     if (!hasIndex(index.row(), index.column(), index.parent()) || !value.isValid())
         return false;
 
@@ -118,18 +118,16 @@ void ArgumentsListModel::move(int from, int to)
 {   
     QModelIndex index;
     if (beginMoveRows(index, from, from, index, to > from ? to + 1 : to)) {
-            m_data.move(from, to);
-            endMoveRows();
+        m_data.move(from, to);
+        endMoveRows();
     }
 }
 
 void ArgumentsListModel::insert(int index, QString data)
-{
-    qDebug() << data;
+{    
     beginInsertRows(QModelIndex(), index, index); //notify views and proxy models that a line will be inserted
-    m_data.insert(index, {data, false}); // do the modification to the model data
+    m_data.insert(index, {data, true}); // do the modification to the model data
     endInsertRows();
-
 }
 
 void ArgumentsListModel::remove(int index)
@@ -137,4 +135,26 @@ void ArgumentsListModel::remove(int index)
     beginRemoveRows(QModelIndex(), index, index); //notify views and proxy models that a line will be deleted
     m_data.removeAt(index); // do the modification to the model data
     endRemoveRows();
+}
+
+QList<char> ArgumentsListModel::listOfArgs()
+{
+    QList<char> list;
+    for (auto item : m_data) {
+        char c = static_cast<char>(item.title.toUInt());
+        list.append(c);
+    }
+    return list;
+}
+
+void ArgumentsListModel::match(const QString data)
+{
+    auto pattern = data;
+
+    for (int i = 0; i < m_data.size(); i ++)
+    {
+        m_data[i].selected = (pattern.indexOf(m_data[i].title) > -1);
+        auto index = createIndex(i, 0);
+        emit dataChanged(index, index, {Selected});
+    }
 }
