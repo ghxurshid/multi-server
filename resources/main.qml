@@ -143,6 +143,14 @@ ApplicationWindow {
                                             httpPort.text = httpStt.hasOwnProperty("port") ? httpStt.port : 0
                                         }
                                     }
+
+                                    if (srvStt.hasOwnProperty("comm")) {
+                                        var commStt = srvStt.comm
+                                        if (typeof(commStt) != undefined) {
+                                            portName.currentIndex = commStt.hasOwnProperty("portName") ? portName.find(commStt.portName) : 0
+                                            portBoudRate.text = commStt.hasOwnProperty("portBoudRate") ? commStt.portBoudRate : 9600
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -216,13 +224,44 @@ ApplicationWindow {
                                     }
                                 }
                             }
+
+                            Item {
+                                implicitWidth: 300
+                                implicitHeight: 200
+
+                                ColumnLayout {
+                                    height: parent.height
+                                    width: dp(30)
+                                    anchors {
+                                        left: parent.left
+                                        leftMargin: dp(5)
+                                    }
+
+                                    ComboBox {
+                                        id: portName
+                                        model: mainWrapper.commPortList
+                                        onActivated: {
+                                            var txt = portName.currentText
+                                            mainWrapper.jsonSettings = "{\"server\" : {\"comm\" : {\"portName\" : \"" + txt + "\"}}}"
+                                        }
+                                    }
+
+                                    TextField {
+                                        id: portBoudRate
+                                        text: qsTr("9600")
+                                        onAccepted: {
+                                            mainWrapper.jsonSettings = "{\"server\" : {\"comm\" : {\"portBoudRate\" : \"" + portBoudRate.text + "\"}}}"
+                                            focus = false
+                                        }
+                                    }
+                                }
+                            }
                         }
 
                         Component.onCompleted: {
                             applySettings()
                         }
                     }
-
 
                     Rectangle {
                         color: "lightblue"

@@ -241,5 +241,97 @@ bool HttpServer::started()
 
 #pragma mark - comm server
 
+CommServer::CommServer(QObject *parent) : AbstractServer (parent)
+{
+    server = new QSerialPort();
+    connect(server, SIGNAL(readyRead()), this, SLOT(readyRead()));
+}
+
+CommServer::~CommServer()
+{
+    stop();
+    if (server) {
+        delete server;
+        server = nullptr;
+    }
+}
+
+void CommServer::start()
+{
+    if (server)
+    {
+        auto parent_ = reinterpret_cast<Page*>(parent());
+        auto serv = parent_->settings()["server"];
+        auto comm = serv.isObject() ? serv["comm"] : JsonObject();
+        auto name = comm.isObject() ? comm["portName"].toString() : QString("");
+        auto bdrt = comm.isObject() ? comm["portBoudRate"].toString() : QString("");
+
+        QRegExp nameReg("COM\\d{1,3}");
+        QRegExp bdrtReg("\\d+");
+
+        auto portName     = nameReg.exactMatch(name) ? name : QString("");
+        auto portBoudRate = bdrtReg.exactMatch(bdrt) ? qint32(bdrt.toLong()) : qint32(9600);
+
+        server->setPortName(portName);
+        server->setBaudRate(portBoudRate); 
+
+        if (server->open(QIODevice::ReadWrite))
+        {
+            auto message = QString("<font color=\"#00E300\"><b>COMM Server</b> is started: [") + portName + ":" + QString::number(portBoudRate) + QString("]</font>");
+            emit serverStarted(message);
+        }
+        else
+        {
+            auto message = QString("<font color=\"#E30000\"><b>COMM Server</b> is not started: [" + server->errorString() + "]</font>");
+            emit serverStarted(message);
+        }
+    }
+}
+
+void CommServer::stop()
+{
+    if (server) {
+        server->close();
+        auto message = QString("<font color=\"#FFFF00\"><b>Comm Server</b> stopped!</font>");
+        emit serverStopped(message);
+    }
+}
+
+AbstractServer::Response CommServer::sendData(QString data)
+{
+    Response resp;
+
+    if (!server) {
+        resp.message = QString("<font color=\"#FFFF00\">Can't send data:( - Comm server not valid!</font>");
+    } else {
+        if (!started()) {
+            resp.message = QString("<font color=\"#FFFF00\">Can't send data:( - Comm server is not started!</font>");
+        } else {
+            server->write(data.toLocal8Bit());
+
+            resp.status = true;
+            resp.message = QString("<b>Sended data[%1]</b>: ").arg(QString::number(data.size())) + data;
+        }
+    }
+
+    return resp;
+}
+
+bool CommServer::isValid()
+{
+    return !server ? false : true;
+}
+
+bool CommServer::started()
+{
+    return server && server->isOpen();
+}
+
+void CommServer::readyRead()
+{
+    if (!server || !server->isReadable()) return;
+
+    emit dataReceived(QString(server->readAll()));
+}
 
 #pragma mark - bluetooth server

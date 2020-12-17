@@ -58,7 +58,7 @@ void Page::setType(int type)
     switch (type) {
         case 0: server = new TcpServer(this);  break;
         case 1: server = new HttpServer(this); break;
-        case 2: break;
+        case 2: server = new CommServer(this); break;
         case 3: break;
     }
 
@@ -114,6 +114,11 @@ void Page::setSettings(const JsonObject &settings)
     auto stt = settings;
     this->settings_.update(stt);
     emit settingsChanged();
+}
+
+QObject *Page::commPortList()
+{
+    return &m_commPortList;
 }
 
 QObject *Page::networkList()

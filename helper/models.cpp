@@ -2,6 +2,7 @@
 #include <QNetworkInterface>
 
 
+
 #pragma mark - NetworkListModel definitions
 
 NetworkListModel::NetworkListModel(QObject *parent) : QAbstractListModel (parent)
@@ -45,6 +46,43 @@ QVariant NetworkListModel::data(const QModelIndex &index, int role) const
         {
             return QVariant(m_data[row - 1]);
         }
+    }
+    return QVariant();
+}
+
+
+#pragma mark - CommPortListModel definitions
+
+CommPortListModel::CommPortListModel(QObject *parent) : QAbstractListModel (parent)
+{
+    m_data = QSerialPortInfo::availablePorts();
+}
+
+QHash<int, QByteArray> CommPortListModel::roleNames() const
+{
+    QHash<int, QByteArray> roles = QAbstractListModel::roleNames();
+    roles[ModelData] = "modelData";
+    return roles;
+}
+
+int CommPortListModel::rowCount(const QModelIndex &parent) const
+{
+    Q_UNUSED(parent)
+    return m_data.size() + 1;
+}
+
+QVariant CommPortListModel::data(const QModelIndex &index, int role) const
+{
+    int row = index.row();
+    int size = m_data.size() + 1;
+    if (!index.isValid() || row >= size) {
+        return QVariant();
+    }
+
+    if (row == 0) {
+        return QVariant("None");
+    } else {
+        if (role == Roles::ModelData) return QVariant(m_data[row - 1].portName());
     }
     return QVariant();
 }

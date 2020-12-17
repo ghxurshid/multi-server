@@ -1,6 +1,7 @@
 #ifndef MODELS_H
 #define MODELS_H
 
+#include <QSerialPortInfo>
 #include <QAbstractListModel>
 
 class NetworkListModel : public QAbstractListModel
@@ -19,6 +20,23 @@ public:
 
 private:
     QList<QString> m_data;
+};
+
+class CommPortListModel : public QAbstractListModel
+{
+public:
+    enum Roles {
+        ModelData = Qt::UserRole + 1
+    };
+
+    CommPortListModel(QObject *parent = nullptr);
+
+    virtual int rowCount(const QModelIndex &parent) const;
+    virtual QVariant data(const QModelIndex &index, int role) const;
+    virtual QHash<int, QByteArray> roleNames() const;
+
+private:
+    QList<QSerialPortInfo> m_data;
 };
 
 class ArgumentsListModel : public QAbstractListModel

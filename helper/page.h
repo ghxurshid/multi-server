@@ -17,6 +17,7 @@ class Page : public QQuickItem
     Q_PROPERTY(QString recvText READ recvText NOTIFY recvTextChanged)
     Q_PROPERTY(QString sendText READ sendText NOTIFY sendTextChanged)
     Q_PROPERTY(QString jsonSettings READ jsonSettings NOTIFY settingsChanged WRITE setJsonSettings)
+    Q_PROPERTY(QObject * commPortList READ commPortList NOTIFY commPortListChanged)
     Q_PROPERTY(QObject * networkList READ networkList NOTIFY networkListChanged)
     Q_PROPERTY(QObject * leftArgList READ leftArgList NOTIFY leftArgListChanged)
     Q_PROPERTY(QObject * rightArgList READ rightArgList NOTIFY rightArgListChanged)
@@ -39,6 +40,7 @@ public:
     const JsonObject &settings();
     void setSettings(const JsonObject & settings);
 
+    QObject *commPortList();
     QObject *networkList();
     QObject *leftArgList();
     QObject *rightArgList();
@@ -51,6 +53,7 @@ signals:
     void recvTextChanged();
     void sendTextChanged();
     void settingsChanged();
+    void commPortListChanged();
     void networkListChanged();
     void leftArgListChanged();
     void rightArgListChanged();
@@ -80,6 +83,7 @@ private:
     JsonObject settings_;
 
     NetworkListModel m_networklist;
+    CommPortListModel m_commPortList;
     ArgumentsListModel m_leftArgList;
     ArgumentsListModel m_rightArgList;
 };
