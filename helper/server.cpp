@@ -290,7 +290,7 @@ void CommServer::start()
 
 void CommServer::stop()
 {
-    if (server) {
+    if (server && server->isOpen()) {
         server->close();
         auto message = QString("<font color=\"#FFFF00\"><b>Comm Server</b> stopped!</font>");
         emit serverStopped(message);
@@ -324,6 +324,7 @@ bool CommServer::isValid()
 
 bool CommServer::started()
 {
+    qDebug() << server->isOpen();
     return server && server->isOpen();
 }
 

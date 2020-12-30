@@ -153,7 +153,7 @@ bool ArgumentsListModel::setData(const QModelIndex &index, const QVariant &value
 }
 
 void ArgumentsListModel::move(int from, int to)
-{   
+{
     QModelIndex index;
     if (beginMoveRows(index, from, from, index, to > from ? to + 1 : to)) {
         m_data.move(from, to);
@@ -162,9 +162,9 @@ void ArgumentsListModel::move(int from, int to)
 }
 
 void ArgumentsListModel::insert(int index, QString data)
-{    
-    beginInsertRows(QModelIndex(), index, index); //notify views and proxy models that a line will be inserted
-    m_data.insert(index, {data, true}); // do the modification to the model data
+{
+    beginInsertRows(QModelIndex(), index, index);
+    m_data.insert(index, {data, false});
     endInsertRows();
 }
 
