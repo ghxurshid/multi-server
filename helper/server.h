@@ -6,6 +6,7 @@
 #include <QTcpSocket>
 #include <QHttpServer>
 #include <QJsonObject>
+#include <QSerialPort>
 
 class AbstractServer : public QObject
 {
@@ -90,14 +91,34 @@ public:
 signals:
 
 public slots:
-//    void newConnection();
-//    void readyRead();
-//    void slotDisconnected();
 
 private:
     QString _patternText;
     QHttpServer * server;
     bool _started = false;
+};
+
+class CommServer : public AbstractServer
+{
+    Q_OBJECT
+public:
+    explicit CommServer(QObject *parent = nullptr);
+    ~CommServer() override;
+
+    void start() override;
+    void stop() override;
+
+    Response sendData(QString data) override;
+    bool isValid() override;
+    bool started() override;
+
+signals:
+
+public slots:
+    void readyRead();
+
+private:
+    QSerialPort * server;
 };
 
 #endif // SERVER_H

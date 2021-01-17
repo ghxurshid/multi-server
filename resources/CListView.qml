@@ -65,7 +65,7 @@ ListView {
                             id: costText
                             text: title
                             font.pointSize: 15
-                            color: "white"
+                            color: selected ? "red" : "white"
                             font.bold: true
                             Layout.alignment: Qt.AlignLeft
                             Layout.fillWidth: true
@@ -75,8 +75,7 @@ ListView {
                         TextField {
                             id: costTextInput
                             text: title
-                            font.pointSize: 15
-                            //color: "white"
+                            font.pointSize: 15                            
                             font.bold: true
                             Layout.alignment: Qt.AlignLeft
                             Layout.fillWidth: true
@@ -84,16 +83,27 @@ ListView {
                             visible: focus
 
 
-                            onAccepted: {
-                                listView.model.setProperty(idx, "title", costTextInput.text)
+                            onAccepted: {                                
+                                model.title = costTextInput.text
+                                model.selected = false
                                 costTextInput.focus = false
                             }
                         }
 
                         Image {
+                            id: deleteIcon
+                            property bool delayRemove: false
                             Layout.alignment: Qt.AlignRight
                             source: "qrc:/resources/image/list-delete.png"
-                            MouseArea { anchors.fill:parent; onClicked: listView.model.remove(index) }
+                            MouseArea {
+                                anchors.fill:parent;
+                                onClicked: {
+                                    if (!deleteIcon.delayRemove) {
+                                        deleteIcon.delayRemove = true
+                                        listView.model.remove(index)
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -106,7 +116,7 @@ ListView {
                     Image {
                         anchors.centerIn: parent
                         source: "qrc:/resources/image/plus-sign.png"
-                        MouseArea { anchors.fill:parent; onClicked: listView.model.insert(count - 1, {"title" : ""}) }
+                        MouseArea { anchors.fill:parent; onClicked: listView.model.insert(count - 1, "---") }
                     }
                 }
             }
@@ -122,12 +132,12 @@ ListView {
 
             ListView.onAdd: SequentialAnimation {
                 PropertyAction { target: dragArea; property: "height"; value: 0 }
-                NumberAnimation { target: dragArea; property: "height"; to: dp(8); duration: 250; easing.type: Easing.InOutQuad }
+                NumberAnimation { target: dragArea; property: "height"; to: dp(8); duration: 200; easing.type: Easing.InOutQuad }
             }
 
             ListView.onRemove: SequentialAnimation {
                 PropertyAction { target: dragArea; property: "ListView.delayRemove"; value: true }
-                NumberAnimation { target: dragArea; property: "height"; to: 0; duration: 250; easing.type: Easing.InOutQuad }
+                NumberAnimation { target: dragArea; property: "height"; to: 0; duration: 200; easing.type: Easing.InOutQuad }
 
                 // Make sure delayRemove is set back to false so that the item can be destroyed
                 PropertyAction { target: dragArea; property: "ListView.delayRemove"; value: false }
@@ -136,8 +146,8 @@ ListView {
     }
 
     Component.onCompleted: {
-        if (listView.model.count < 1) {
-            listView.model.append({title: ""})
-        }
+//        if (listView.model.count < 1) {
+//            listView.model.append({title: ""})
+//        }
     }
 }

@@ -17,7 +17,10 @@ class Page : public QQuickItem
     Q_PROPERTY(QString recvText READ recvText NOTIFY recvTextChanged)
     Q_PROPERTY(QString sendText READ sendText NOTIFY sendTextChanged)
     Q_PROPERTY(QString jsonSettings READ jsonSettings NOTIFY settingsChanged WRITE setJsonSettings)
+    Q_PROPERTY(QObject * commPortList READ commPortList NOTIFY commPortListChanged)
     Q_PROPERTY(QObject * networkList READ networkList NOTIFY networkListChanged)
+    Q_PROPERTY(QObject * leftArgList READ leftArgList NOTIFY leftArgListChanged)
+    Q_PROPERTY(QObject * rightArgList READ rightArgList NOTIFY rightArgListChanged)
 public:
     Page(QQuickItem *parent = nullptr);
     ~Page();
@@ -37,18 +40,29 @@ public:
     const JsonObject &settings();
     void setSettings(const JsonObject & settings);
 
+    QObject *commPortList();
     QObject *networkList();
+    QObject *leftArgList();
+    QObject *rightArgList();
 
     Q_INVOKABLE bool startServer();
+<<<<<<< HEAD
     Q_INVOKABLE void sendData(QString data);
+=======
+    Q_INVOKABLE void sendData(QString data, QString end);
+>>>>>>> 64df73e8632ebb409b261864760f39bd74ffdf59
 
 signals:
     void typeChanged();    
     void recvTextChanged();
     void sendTextChanged();
     void settingsChanged();
+    void commPortListChanged();
     void networkListChanged();
+    void leftArgListChanged();
+    void rightArgListChanged();
     void connectionStateChanged();
+
 
 public slots:   
     void serverStarted(QString serverInfo);
@@ -57,6 +71,10 @@ public slots:
     void clientDisconnected(QString clientInfo);
 
     void dataReceived(QString data);
+
+
+protected:
+    QString oprintf(QString format, QList<char> args);     
 
 private:
     int type_ = -1;
@@ -68,7 +86,10 @@ private:
     AbstractServer * server;
     JsonObject settings_;
 
-    NetworkListModel nlModel;
+    NetworkListModel m_networklist;
+    CommPortListModel m_commPortList;
+    ArgumentsListModel m_leftArgList;
+    ArgumentsListModel m_rightArgList;
 };
 
 #endif // PAGE_H

@@ -13,7 +13,6 @@ Page::Page(QQuickItem *parent) : QQuickItem (parent)
             this->settings_ = doc.object();
         }
     }
-
 }
 
 Page::~Page()
@@ -59,7 +58,7 @@ void Page::setType(int type)
     switch (type) {
         case 0: server = new TcpServer(this);  break;
         case 1: server = new HttpServer(this); break;
-        case 2: break;
+        case 2: server = new CommServer(this); break;
         case 3: break;
     }
 
@@ -101,8 +100,7 @@ void Page::setJsonSettings(QString stt)
     if (!doc.isEmpty()) {
         auto objStt = JsonObject(doc.object());
         this->settings_.update(objStt);
-        emit settingsChanged();
-        qDebug() << settings_;
+        emit settingsChanged();        
     }
 }
 
@@ -118,9 +116,24 @@ void Page::setSettings(const JsonObject &settings)
     emit settingsChanged();
 }
 
+QObject *Page::commPortList()
+{
+    return &m_commPortList;
+}
+
 QObject *Page::networkList()
 {
-    return &nlModel;
+    return &m_networklist;
+}
+
+QObject *Page::leftArgList()
+{
+    return &m_leftArgList;
+}
+
+QObject *Page::rightArgList()
+{
+    return &m_rightArgList;
 }
 
 #pragma mark - public functions
@@ -139,51 +152,63 @@ bool Page::startServer()
     return true;
 }
 
-void Page::sendData(QString data)
+void Page::sendData(QString data, QString end)
 {
-    qDebug() << Q_FUNC_INFO << data;
     if (server && server->isValid()) {
-        auto resp = server->sendData(data);
+        QString mData = oprintf(data, m_rightArgList.listOfArgs());
+        char c = static_cast<char>(end.toUInt());
+        mData.append(QChar(c));
+        auto resp = server->sendData(mData);
         sendText_ += resp.message + "<br>";
         emit sendTextChanged();
     } 
 }
 
 void Page::serverStarted(QString serverInfo)
-{
-    qDebug() << "serverStarted: " << serverInfo;
+{    
     recvText_ += serverInfo + "<br>";
     emit recvTextChanged();
     emit connectionStateChanged();
 }
 
 void Page::serverStopped(QString serverInfo)
-{
-    qDebug() << "serverStopped: " << serverInfo;    
+{    
     recvText_ += serverInfo + "<br>";
     emit recvTextChanged();
     emit connectionStateChanged();
 }
 
 void Page::clientConnected(QString clientInfo)
-{
-    qDebug() << "clientConnected: " << clientInfo;
+{    
     recvText_ += clientInfo + "<br>";
     emit recvTextChanged();
 }
 
 void Page::clientDisconnected(QString clientInfo)
-{
-    qDebug() << "clientDisconnected: " << clientInfo;
+{    
     recvText_ += clientInfo + "<br>";
     emit recvTextChanged();
 }
 
 void Page::dataReceived(QString data)
 {
-    qDebug() << "dataReceived: " << data;
+    m_rightArgList.match(data);
     recvText_ += data + "<br>";
     emit recvTextChanged();
 }
 
 
+#pragma mark - protected functions
+
+QString Page::oprintf(QString format, QList<char> args)
+{
+    QRegExp exp("%[idfsb]");
+    int pos = 0;
+    while (args.size() > 0 && (pos = format.indexOf(exp, pos)) >= 0) {
+        int npos = pos + 1;
+        format.replace(npos, 1, "1");
+        format = format.arg(args[0]);
+        args.erase(args.begin());
+    }
+    return format;
+}

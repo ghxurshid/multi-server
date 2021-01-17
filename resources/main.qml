@@ -6,8 +6,8 @@ import QtQuick.Controls 1.4
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.1
 import QtQuick.Controls 2.5
-import Custom 1.0
 import QtQuick.Layouts 1.12
+import Custom 1.0
 
 ApplicationWindow {
     id: mainWindow
@@ -72,10 +72,7 @@ ApplicationWindow {
                             Layout.alignment: Qt.AlignTop
 
                             anchors.leftMargin: dp(2)
-                            anchors.topMargin: dp(5)
-                            onCurrentIndexChanged: {
-                                console.log(currentIndex)
-                            }
+                            anchors.topMargin: dp(5)                             
 
                             ButtonGroup {
                                 buttons: columnLayout.children
@@ -146,6 +143,14 @@ ApplicationWindow {
                                             httpPort.text = httpStt.hasOwnProperty("port") ? httpStt.port : 0
                                         }
                                     }
+
+                                    if (srvStt.hasOwnProperty("comm")) {
+                                        var commStt = srvStt.comm
+                                        if (typeof(commStt) != undefined) {
+                                            portName.currentIndex = commStt.hasOwnProperty("portName") ? portName.find(commStt.portName) : 0
+                                            portBoudRate.text = commStt.hasOwnProperty("portBoudRate") ? commStt.portBoudRate : 9600
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -156,8 +161,7 @@ ApplicationWindow {
                             currentIndex: mainWrapper.type
                             visible: mainWrapper.type >= 0
 
-                            Rectangle {
-                                color: 'teal'
+                            Item {
                                 implicitWidth: 200
                                 implicitHeight: 200
 
@@ -189,8 +193,7 @@ ApplicationWindow {
                                 }
                             }
 
-                            Rectangle {
-                                color: 'plum'
+                            Item {
                                 implicitWidth: 300
                                 implicitHeight: 200
 
@@ -221,13 +224,44 @@ ApplicationWindow {
                                     }
                                 }
                             }
+
+                            Item {
+                                implicitWidth: 300
+                                implicitHeight: 200
+
+                                ColumnLayout {
+                                    height: parent.height
+                                    width: dp(30)
+                                    anchors {
+                                        left: parent.left
+                                        leftMargin: dp(5)
+                                    }
+
+                                    ComboBox {
+                                        id: portName
+                                        model: mainWrapper.commPortList
+                                        onActivated: {
+                                            var txt = portName.currentText
+                                            mainWrapper.jsonSettings = "{\"server\" : {\"comm\" : {\"portName\" : \"" + txt + "\"}}}"
+                                        }
+                                    }
+
+                                    TextField {
+                                        id: portBoudRate
+                                        text: qsTr("9600")
+                                        onAccepted: {
+                                            mainWrapper.jsonSettings = "{\"server\" : {\"comm\" : {\"portBoudRate\" : \"" + portBoudRate.text + "\"}}}"
+                                            focus = false
+                                        }
+                                    }
+                                }
+                            }
                         }
 
                         Component.onCompleted: {
                             applySettings()
                         }
                     }
-
 
                     Rectangle {
                         color: "lightblue"
@@ -284,13 +318,14 @@ ApplicationWindow {
 
                         ListModel {
                             id: strListModel
+                            objectName: "strListModel"
                         }
 
                         CListView {
                             id: strList
                             anchors.fill: parent
                             anchors.margins: dp(margin_)
-                            model: strListModel
+                            model: mainWrapper.leftArgList
                         }
                     }
 
@@ -350,14 +385,15 @@ ApplicationWindow {
                         radius: dp(radius_)
 
                         ListModel {
-                            id: qListModel                            
+                            id: argListModel
+                            objectName: "argListModel"
                         }
 
                         CListView {
                             id: qList
                             anchors.fill: parent
                             anchors.margins: dp(margin_)
-                            model: qListModel
+                            model: mainWrapper.rightArgList
                         }
                     }
                 }
@@ -392,10 +428,7 @@ ApplicationWindow {
                             anchors.leftMargin: dp(margin_)
                             verticalAlignment: TextInput.AlignVCenter
                             font.pointSize: 15
-                            clip: true
-                            Component.onCompleted: {
-                                console.log(height)
-                            }
+                            clip: true                            
                         }
                     }
 
@@ -430,9 +463,8 @@ ApplicationWindow {
                             anchors.fill: parent
                             radius: dp(radius_)
                             text: qsTr("Send")
-                            onClicked: {
-                                console.log(sendStringData.text)
-                                mainWrapper.sendData(sendStringData.text)
+                            onClicked: {                                
+                                mainWrapper.sendData(sendStringData.text, sendEndData.text)
                             }
                         }
                     }
