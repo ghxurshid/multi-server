@@ -19,7 +19,8 @@ SOURCES += \
     helper/engine.cpp \
     helper/server.cpp \
     helper/jsonobject.cpp \
-    helper/models.cpp
+    helper/models.cpp \
+    helper/printer.cpp
 
 RESOURCES += qml.qrc
 
@@ -44,4 +45,5 @@ HEADERS += \
     helper/engine.h \
     helper/server.h \
     helper/jsonobject.h \
-    helper/models.h
+    helper/models.h \
+    helper/printer.h

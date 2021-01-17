@@ -46,11 +46,7 @@ public:
     QObject *rightArgList();
 
     Q_INVOKABLE bool startServer();
-<<<<<<< HEAD
-    Q_INVOKABLE void sendData(QString data);
-=======
     Q_INVOKABLE void sendData(QString data, QString end);
->>>>>>> 64df73e8632ebb409b261864760f39bd74ffdf59
 
 signals:
     void typeChanged();    
