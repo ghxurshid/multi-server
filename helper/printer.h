@@ -6,13 +6,16 @@
 #include <string.h>
 #include <stdio.h>
 
+#include <QString>
+#include <QStringList>
+
 class Printer
 {
 public:
     Printer();
-    int vsprintf(char *buf, const char *fmt, va_list args);
-    int sprintf(char *buf, const char *fmt...);
-    int printf(const char *fmt...);
+    QString vsprintf(const char *fmt, QStringList list);
+    QString sprintf(const char *fmt, QStringList list);
+    int printf(const char *fmt, QStringList list);
 };
 
 #endif // PRINTER_H

@@ -14,30 +14,31 @@ __res = ((unsigned long) n) % (unsigned) base; \
 n = ((unsigned long) n) / (unsigned) base; \
 __res; })
 
+static int skip_atoi(const char **s);
+static QString number(QString str, long num, int base, int size, int precision, int type);
+
 Printer::Printer()
 {
 
 }
 
-
-static int skip_atoi(const char **s);
-static char *number(char *str, long num, int base, int size, int precision, int type);
-
-int Printer::vsprintf(char *buf, const char *fmt, va_list args)
+QString Printer::vsprintf(const char *fmt, QStringList list)
 {
     int len;
     unsigned long num;
-    int i, base;
-    char *str;
-    const char *s;
-    int flags;		/* flags to number() */
+    int base;
+    QString s;
+    int flags;		    /* flags to number() */
     int field_width;	/* width of output field */
     int precision;		/* min. # of digits for integers; max
-                   number of chars for from string */
+                           number of chars for from string */
     int qualifier;		/* 'h', 'l', or 'L' for integer fields */
-    for (str = buf; *fmt; ++fmt) {
+
+    QString str;
+
+    for (; *fmt; ++fmt) {
         if (*fmt != '%') {
-            *str++ = *fmt;
+            str.append(*fmt);
             continue;
         }
         /* process flags */
@@ -68,7 +69,7 @@ int Printer::vsprintf(char *buf, const char *fmt, va_list args)
         else if (*fmt == '*') {
             ++fmt;
             /* it's the next argument */
-            field_width = va_arg(args, int);
+            field_width = (!list.isEmpty() ? list.takeFirst() : QString()).toInt(); // va_arg(args, int);
             if (field_width < 0) {
                 field_width = -field_width;
                 flags |= LEFT;
@@ -83,7 +84,7 @@ int Printer::vsprintf(char *buf, const char *fmt, va_list args)
             else if (*fmt == '*') {
                 ++fmt;
                 /* it's the next argument */
-                precision = va_arg(args, int);
+                precision = (!list.isEmpty() ? list.takeFirst() : QString()).toInt(); // va_arg(args, int);
             }
             if (precision < 0)
                 precision = 0;
@@ -100,42 +101,41 @@ int Printer::vsprintf(char *buf, const char *fmt, va_list args)
         case 'c':
             if (!(flags & LEFT))
                 while (--field_width > 0)
-                    *str++ = ' ';
-            *str++ = (unsigned char)va_arg(args, int);
+                    str.append(' ');
+            str.append(static_cast<unsigned char>(((!list.isEmpty() ? list.takeFirst() : QString()).toInt()))); // va_arg(args, int);
             while (--field_width > 0)
-                *str++ = ' ';
+                str.append(' ');
             continue;
-        case 's':
-            s = va_arg(args, char *);
-            len = strnlen(s, precision);
+        case 's':            
+            s = (!list.isEmpty() ? list.takeFirst() : QString()).left(precision);//va_arg(args, char *);
+            len = s.size();// strnlen(s, precision);
             if (!(flags & LEFT))
                 while (len < field_width--)
-                    *str++ = ' ';
-            for (i = 0; i < len; ++i)
-                *str++ = *s++;
+                    str.append(' ');
+            str.append(s);
             while (len < field_width--)
-                *str++ = ' ';
+                str.append(' ');
             continue;
         case 'p':
-            if (field_width == -1) {
-                field_width = 2 * sizeof(void *);
-                flags |= ZEROPAD;
-            }
-            str = number(str,
-                     (unsigned long)va_arg(args, int), 16, // void* replaced to int
-                     field_width, precision, flags);
+//            if (field_width == -1) {
+//                field_width = 2 * sizeof(void *);
+//                flags |= ZEROPAD;
+//            }
+//            str = number(str,
+//                     (unsigned long)va_arg(args, int), 16, // void* replaced to int
+//                     field_width, precision, flags);
             continue;
         case 'n':
-            if (qualifier == 'l') {
-                long *ip = va_arg(args, long *);
-                *ip = (str - buf);
-            } else {
-                int *ip = va_arg(args, int *);
-                *ip = (str - buf);
-            }
+//            if (qualifier == 'l') {
+//                long *ip = va_arg(args, long *);
+//                *ip = (str - buf);
+//            } else {
+//                int *ip = va_arg(args, int *);
+//                *ip = (str - buf);
+//            }
             continue;
         case '%':
-            *str++ = '%';
+            str.append('%');
             continue;
             /* integer number formats - set up the flags and "break" */
         case 'o':
@@ -152,48 +152,35 @@ int Printer::vsprintf(char *buf, const char *fmt, va_list args)
         case 'u':
             break;
         default:
-            *str++ = '%';
+            str.append('%');
             if (*fmt)
-                *str++ = *fmt;
+                str.append(*fmt);
             else
                 --fmt;
             continue;
         }
         if (qualifier == 'l')
-            num = va_arg(args, unsigned long);
+            num = (!list.isEmpty() ? list.takeFirst() : QString()).toULong(); // va_arg(args, unsigned long);
         else if (qualifier == 'h') {
-            num = (unsigned short)va_arg(args, int);
+            num = (!list.isEmpty() ? list.takeFirst() : QString()).toUShort(); //(unsigned short)va_arg(args, int);
             if (flags & SIGN)
                 num = (short)num;
         } else if (flags & SIGN)
-            num = va_arg(args, int);
+            num = (!list.isEmpty() ? list.takeFirst() : QString()).toInt();// va_arg(args, int);
         else
-            num = va_arg(args, unsigned int);
+            num = (!list.isEmpty() ? list.takeFirst() : QString()).toUInt(); //va_arg(args, unsigned int);
         str = number(str, num, base, field_width, precision, flags);
     }
-    *str = '\0';
-    return str - buf;
+
+    return str;
 }
-int Printer::sprintf(char *buf, const char *fmt, ...)
-{
-    va_list args;
-    int i;
-    va_start(args, fmt);
-    i = vsprintf(buf, fmt, args);
-    va_end(args);
-    return i;
+QString Printer::sprintf(const char *fmt, QStringList list)
+{ 
+    return vsprintf(fmt, list);
 }
-int Printer::printf(const char *fmt, ...)
+int Printer::printf(const char *fmt, QStringList list)
 {
-    char printf_buf[1024];
-    va_list args;
-    int printed;
-    va_start(args, fmt);
-    printed = vsprintf(printf_buf, fmt, args);
-    va_end(args);
-    puts(printf_buf);
-    qDebug() << printf_buf;
-    return printed;
+    qDebug() << vsprintf(fmt, list);
 }
 
 static int skip_atoi(const char **s)
@@ -204,8 +191,7 @@ static int skip_atoi(const char **s)
     return i;
 }
 
-static char *number(char *str, long num, int base, int size, int precision,
-            int type)
+static QString number(QString str, long num, int base, int size, int precision, int type)
 {
     /* we are called with base 8, 10 or 16, only, thus don't need "G..."  */
     static const char digits[] = "0123456789ABCDEF"; /* "GHIJKLMNOPQRSTUVWXYZ"; */
@@ -251,25 +237,25 @@ static char *number(char *str, long num, int base, int size, int precision,
     size -= precision;
     if (!(type & (ZEROPAD + LEFT)))
         while (size-- > 0)
-            *str++ = ' ';
+            str.append(' ');
     if (sign)
-        *str++ = sign;
+        str.append(sign);
     if (type & SPECIAL) {
         if (base == 8)
-            *str++ = '0';
+            str.append('0');
         else if (base == 16) {
-            *str++ = '0';
-            *str++ = ('X' | locase);
+            str.append('0');
+            str.append(('X' | locase));
         }
     }
     if (!(type & LEFT))
         while (size-- > 0)
-            *str++ = c;
+            str.append(c);
     while (i < precision--)
-        *str++ = '0';
+        str.append('0');
     while (i-- > 0)
-        *str++ = tmp[i];
+        str.append(tmp[i]);
     while (size-- > 0)
-        *str++ = ' ';
+        str.append(' ');
     return str;
 }
