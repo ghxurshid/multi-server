@@ -168,27 +168,27 @@ void Page::sendData(QString data, QString end)
 
 void Page::serverStarted(QString serverInfo)
 {    
-    recvText_ += serverInfo + "<br>";
+    //recvText_ += serverInfo + "<br>";
     emit recvTextChanged();
     emit connectionStateChanged();
 }
 
 void Page::serverStopped(QString serverInfo)
 {    
-    recvText_ += serverInfo + "<br>";
+    //recvText_ += serverInfo + "<br>";
     emit recvTextChanged();
     emit connectionStateChanged();
 }
 
 void Page::clientConnected(QString clientInfo)
 {    
-    recvText_ += clientInfo + "<br>";
+    //recvText_ += clientInfo + "<br>";
     emit recvTextChanged();
 }
 
 void Page::clientDisconnected(QString clientInfo)
 {    
-    recvText_ += clientInfo + "<br>";
+    //recvText_ += clientInfo + "<br>";
     emit recvTextChanged();
 }
 
@@ -202,18 +202,18 @@ void Page::dataReceived(QString data)
 
 #pragma mark - protected functions
 
-QString Page::oprintf(QString format, QList<char> args)
+QString Page::oprintf(QString format, QStringList args)
 {
     Printer prn;
-    prn.printf ("Message: %i %c %s", {"123", "65", "Hello"});
-    prn.printf ("Characters: %c %c", {"97", "65"});
-    prn.printf ("Decimals: %d %ld", {"1977", "650000L"});
-    prn.printf ("Preceding with blanks: %10d", {"1977"});
-    prn.printf ("Preceding with zeros: %010d", {"1977"});
-    prn.printf ("Some different radices: %d %x %o %#x %#o", {"100", "100", "100", "100", "100"});
-    prn.printf ("floats: %4.2f %+.0e %E", {"3.1416", "3.1416", "3.1416"});
-    prn.printf ("Width trick: %*d", {"5", "10"});
-    prn.printf ("%s", {"A string"});
-    prn.printf ("Precision: %9.5i", {"5"});
-    return format;
+//    prn.printf ("Message: %i %c %s", {"123", "65", "Hello"});
+//    prn.printf ("Characters: %c %c", {"97", "65"});
+//    prn.printf ("Decimals: %d %ld", {"1977", "650000L"});
+//    prn.printf ("Preceding with blanks: %10d", {"1977"});
+//    prn.printf ("Preceding with zeros: %010d", {"1977"});
+//    prn.printf ("Some different radices: %d %x %o %#x %#o", {"100", "100", "100", "100", "100"});
+//    prn.printf ("floats: %4.2f %+.0e %E", {"3.1416", "3.1416", "3.1416"});
+//    prn.printf ("Width trick: %*d", {"5", "10"});
+//    prn.printf ("%s", {"A string"});
+//    prn.printf ("Precision: %9.5i", {"5"});
+    return prn.sprintf(format.toLocal8Bit().data(), args);
 }

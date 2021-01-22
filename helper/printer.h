@@ -13,9 +13,11 @@ class Printer
 {
 public:
     Printer();
-    QString vsprintf(const char *fmt, QStringList list);
+
     QString sprintf(const char *fmt, QStringList list);
     int printf(const char *fmt, QStringList list);
+private:
+    QString vsprintf(const char *fmt, QStringList list);
 };
 
 #endif // PRINTER_H

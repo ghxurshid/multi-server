@@ -175,12 +175,11 @@ void ArgumentsListModel::remove(int index)
     endRemoveRows();
 }
 
-QList<char> ArgumentsListModel::listOfArgs()
+QStringList ArgumentsListModel::listOfArgs()
 {
-    QList<char> list;
-    for (auto item : m_data) {
-        char c = static_cast<char>(item.title.toUInt());
-        list.append(c);
+    QStringList list;
+    for (auto item : m_data) {         
+        list.append(item.title);
     }
     return list;
 }

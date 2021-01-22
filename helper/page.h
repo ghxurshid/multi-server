@@ -70,7 +70,7 @@ public slots:
 
 
 protected:
-    QString oprintf(QString format, QList<char> args);     
+    QString oprintf(QString format, QStringList args);
 
 private:
     int type_ = -1;

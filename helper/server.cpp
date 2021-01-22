@@ -88,7 +88,7 @@ AbstractServer::Response TcpServer::sendData(QString data)
                 if (size == data.size())
                 {
                     resp.status = true;
-                    resp.message = QString("<b>Sended data[%1]</b>: ").arg(QString::number(size)) + data;
+                    resp.message = /*QString("<b>Sended data[%1]</b>: ").arg(QString::number(size)) +*/ data;
                 }
                 else {
                     resp.message = QString("<font color=\"#FFFF00\">Can't send data:( - ") + socket->errorString() + QString("</font>");
@@ -148,16 +148,76 @@ void TcpServer::slotDisconnected()
 
 #pragma mark - http server
 
+static inline QString host(const QHttpServerRequest &request)
+{
+    return request.headers()[QStringLiteral("Host")].toString();
+}
+
 HttpServer::HttpServer(QObject *parent) : AbstractServer (parent)
 {
     server = new QHttpServer();
 
-    server->route("/", [this]() {        
-        return _patternText;
+    auto requestHnd = [] (const QHttpServerRequest &request) {
+        qDebug() <<  request.value(QByteArray("key"));
+        qDebug() <<  request.url();
+        qDebug() <<  request.query().toString();
+        qDebug() <<  request.method();
+        qDebug() <<  request.headers();
+        qDebug() <<  request.body();
+        qDebug() <<  request.remoteAddress();
+    };
+
+    server->route("/", [this, requestHnd](const QHttpServerRequest &request) {
+        requestHnd (request);
+        return _patternText + "A";
     });
 
-    server->route("/", [this]() {
-        return _patternText;
+    server->route("/query", [requestHnd] (const QHttpServerRequest &request) {
+        requestHnd (request);
+        return QString("%1/query/").arg(host(request));
+    });
+
+    server->route("/query/", [] (qint32 id, const QHttpServerRequest &request) {
+        return QString("%1/query/%2").arg(host(request)).arg(id);
+    });
+
+    server->route("/query/<arg>/log", [] (qint32 id, const QHttpServerRequest &request) {
+        return QString("%1/query/%2/log").arg(host(request)).arg(id);
+    });
+
+    server->route("/query/<arg>/log/", [] (qint32 id, float threshold,
+                                              const QHttpServerRequest &request) {
+        return QString("%1/query/%2/log/%3").arg(host(request)).arg(id).arg(threshold);
+    });
+
+    server->route("/user/", [] (const qint32 id) {
+        return QString("User %1").arg(id);
+    });
+
+    server->route("/user/<arg>/detail", [] (const qint32 id) {
+        return QString("User %1 detail").arg(id);
+    });
+
+    server->route("/user/<arg>/detail/", [] (const qint32 id, const qint32 year) {
+        return QString("User %1 detail year - %2").arg(id).arg(year);
+    });
+
+    server->route("/json/", [] {
+        return QJsonObject{
+            {
+                {"key1", "1"},
+                {"key2", "2"},
+                {"key3", "3"}
+            }
+        };
+    });
+
+    server->route("/assets/<arg>", [] (const QUrl &url) {
+        return QHttpServerResponse::fromFile(QStringLiteral(":/assets/%1").arg(url.path()));
+    });
+
+    server->route("/remote_address", [](const QHttpServerRequest &request) {
+        return request.remoteAddress().toString();
     });
 }
 
@@ -223,7 +283,7 @@ AbstractServer::Response HttpServer::sendData(QString data)
         } else {
             _patternText = data;
             resp.status = true;
-            resp.message = QString("<b>Will send data[%1]</b>: ").arg(QString::number(data.size())) + data;
+            resp.message = /*QString("<b>Will send data[%1]</b>: ").arg(QString::number(data.size())) +*/ data;
         }
     }
 
@@ -312,7 +372,7 @@ AbstractServer::Response CommServer::sendData(QString data)
             server->write(data.toLocal8Bit());
 
             resp.status = true;
-            resp.message = QString("<b>Sended data[%1]</b>: ").arg(QString::number(data.size())) + data;
+            resp.message = /*QString("<b>Sended data[%1]</b>: ").arg(QString::number(data.size())) +*/ data;
         }
     }
 

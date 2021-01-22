@@ -65,7 +65,7 @@ public:
     Q_INVOKABLE void insert(int index, QString data);
     Q_INVOKABLE void remove(int index);
 
-    QList<char> listOfArgs();
+    QStringList listOfArgs();
     void match(const QString data);
 private:
     QList<Item> m_data;

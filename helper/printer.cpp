@@ -174,10 +174,12 @@ QString Printer::vsprintf(const char *fmt, QStringList list)
 
     return str;
 }
+
 QString Printer::sprintf(const char *fmt, QStringList list)
 { 
     return vsprintf(fmt, list);
 }
+
 int Printer::printf(const char *fmt, QStringList list)
 {
     qDebug() << vsprintf(fmt, list);
@@ -204,7 +206,7 @@ static QString number(QString str, long num, int base, int size, int precision, 
     if (type & LEFT)
         type &= ~ZEROPAD;
     if (base < 2 || base > 16)
-        return nullptr;
+        return str;
     c = (type & ZEROPAD) ? '0' : ' ';
     sign = 0;
     if (type & SIGN) {

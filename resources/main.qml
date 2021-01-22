@@ -321,10 +321,30 @@ ApplicationWindow {
                             objectName: "strListModel"
                         }
 
+                        GlowingLabel {
+                            anchors.top: parent.top
+                            anchors.topMargin: dp(3)
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            font.pointSize: 16
+                            text: qsTr("Strings")
+                        }
+
+                        Rectangle {
+                            height: parent.border.width
+                            width: parent.width
+                            color: borderColor
+                            border.color: borderColor
+                            anchors.top: parent.top
+                            anchors.topMargin: dp(10)
+                            z: 1
+                        }
+
                         CListView {
                             id: strList
+                            clip: true
                             anchors.fill: parent
                             anchors.margins: dp(margin_)
+                            anchors.topMargin: dp(10)
                             model: mainWrapper.leftArgList
                         }
                     }
@@ -389,10 +409,30 @@ ApplicationWindow {
                             objectName: "argListModel"
                         }
 
+                        GlowingLabel {
+                            anchors.top: parent.top
+                            anchors.topMargin: dp(3)
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            font.pointSize: 16
+                            text: qsTr("Strings")
+                        }
+
+                        Rectangle {
+                            height: parent.border.width
+                            width: parent.width
+                            color: borderColor
+                            border.color: borderColor
+                            anchors.top: parent.top
+                            anchors.topMargin: dp(10)
+                            z: 1
+                        }
+
                         CListView {
                             id: qList
+                            clip: true
                             anchors.fill: parent
                             anchors.margins: dp(margin_)
+                            anchors.topMargin: dp(10)
                             model: mainWrapper.rightArgList
                         }
                     }
@@ -424,11 +464,20 @@ ApplicationWindow {
                         TextInput {
                             id: sendStringData
                             anchors.fill: parent
-                            anchors.rightMargin: dp(margin_)
-                            anchors.leftMargin: dp(margin_)
+                            anchors.rightMargin: dp(margin_ * 3)
+                            anchors.leftMargin: dp(margin_ * 3)
                             verticalAlignment: TextInput.AlignVCenter
                             font.pointSize: 15
-                            clip: true                            
+                            clip: true
+
+                            Text {
+                                text: qsTr("Input text here")
+                                anchors.left: parent.left
+                                font.pointSize: 15
+                                anchors.verticalCenter: parent.verticalCenter
+                                opacity: 0.4
+                                visible: !(sendStringData.text.length > 0)
+                            }
                         }
                     }
 
@@ -444,6 +493,7 @@ ApplicationWindow {
 
                         TextInput {
                             id: sendEndData
+                            text: qsTr("13")
                             anchors.fill: parent
                             anchors.rightMargin: dp(margin_)
                             anchors.leftMargin: dp(margin_)
