@@ -35,10 +35,10 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-android {
-    QT += androidextras bluetooth
-    QMAKE_LINK += -nostdlib++
-}
+#android {
+#    QT += androidextras bluetooth
+#    QMAKE_LINK += -nostdlib++
+#}
 
 HEADERS += \  
     helper/page.h \

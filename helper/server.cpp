@@ -158,7 +158,7 @@ HttpServer::HttpServer(QObject *parent) : AbstractServer (parent)
     server = new QHttpServer();
 
     auto requestHnd = [] (const QHttpServerRequest &request) {
-        qDebug() <<  request.value(QByteArray("key"));
+        qDebug() <<  request.value(QByteArray("batv"));
         qDebug() <<  request.url();
         qDebug() <<  request.query().toString();
         qDebug() <<  request.method();
@@ -170,6 +170,28 @@ HttpServer::HttpServer(QObject *parent) : AbstractServer (parent)
     server->route("/", [this, requestHnd](const QHttpServerRequest &request) {
         requestHnd (request);
         return _patternText + "A";
+    });
+
+    server->route("/v1.0/operator/device/location", [this, requestHnd](const QHttpServerRequest &request) {
+        QString response = QString("\n- - - - - - - - - - ") + QTime::currentTime().toString() + QString(" - - - - - - - - - -<br>");
+        response.append(QString("<b>URL:</b> ") + request.url().toString() + QString("<br>"));
+        response.append(QString("<b>Query:</b> ") + request.query().toString(QUrl::FullyDecoded) + QString("<br>"));
+        response.append(QString("<b>Client address:</b> ") + request.remoteAddress().toString() + QString("<br>"));
+        response.append(QString("<b>Method:</b> ") + QVariant::fromValue(request.method()).toString() + QString("<br>"));
+        response.append(QString("<b>Body:</b> ") + QString(request.body()) + QString("<br>"));
+        response.append(QString("<b>Headers:</b><ul>"));
+
+        QMapIterator<QString, QVariant> head(request.headers());
+        while (head.hasNext()) {
+            head.next();
+            response.append(QString("<li>") + head.key() + ": <i>" + head.value().toString() + "</i></li>");
+        }
+
+        response.append(QString("</ul>- - - - - - - - - - - - - - - - - - - - - - -<br>"));
+        requestHnd (request);
+        emit this->dataReceived(response);
+
+        return _patternText;
     });
 
     server->route("/query", [requestHnd] (const QHttpServerRequest &request) {

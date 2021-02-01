@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<RCC>
+    <qresource prefix="/">
+        <file alias="resources/image/list-delete.png">../../resources/image/list-delete.png</file>
+        <file alias="resources/image/plus-sign.png">../../resources/image/plus-sign.png</file>
+        <file alias="resources/image/start.png">../../resources/image/start.png</file>
+        <file alias="resources/image/stop.png">../../resources/image/stop.png</file>
+    </qresource>
+</RCC>

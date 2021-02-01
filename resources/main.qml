@@ -326,7 +326,7 @@ ApplicationWindow {
                             anchors.topMargin: dp(3)
                             anchors.horizontalCenter: parent.horizontalCenter
                             font.pointSize: 16
-                            text: qsTr("Strings")
+                            text: qsTr("Indicator")
                         }
 
                         Rectangle {
@@ -414,7 +414,7 @@ ApplicationWindow {
                             anchors.topMargin: dp(3)
                             anchors.horizontalCenter: parent.horizontalCenter
                             font.pointSize: 16
-                            text: qsTr("Strings")
+                            text: qsTr("Arguments")
                         }
 
                         Rectangle {
